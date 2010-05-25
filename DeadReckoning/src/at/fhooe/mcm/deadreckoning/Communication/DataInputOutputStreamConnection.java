@@ -47,7 +47,7 @@ import com.sun.spot.peripheral.TimeoutException;
 public class DataInputOutputStreamConnection {
 
 	private final int TIMEOUT = 2000;
-	private final int PORT = 33;
+	private final int PORT = 333;
 	private final int ROS_PORT = 34;
 
 	private boolean connected = false;
