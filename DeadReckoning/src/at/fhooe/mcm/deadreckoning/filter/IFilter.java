@@ -13,16 +13,17 @@ package at.fhooe.mcm.deadreckoning.filter;
  * values.
  */
 public interface IFilter {
+
     /**
      * @brief Initializes a filter with some initial values.
      *
      * As each filter uses different parameters, they have to be handled
      * in the derived implementation of a filter.
      *
-     * @param initialValues The initial values for each dimension used.
-     * @param dimension The amount of dimensions used for filtering.
+     * @param _initialValues The initial values for each dimension used.
+     * @param _dimension The amount of dimensions used for filtering.
      */
-    void init(float[] initialValues, int dimension);
+    void init(float[] _initialValues, int _dimension);
 
     /**
      * @brief Updates a filter each cycle.
@@ -30,9 +31,9 @@ public interface IFilter {
      * This method uses measured value to improve the prediction of a filter and
      * generates new corrected values each time the method is called.
      *
-     * @param observedValue The observed value needed to update the prediction.
+     * @param _observedValue The observed value needed to update the prediction.
      */
-    void update(float[] observedValue);
+    void update(float[] _observedValue);
 
     /**
      * @brief Provides the caller with the currently filtered values.

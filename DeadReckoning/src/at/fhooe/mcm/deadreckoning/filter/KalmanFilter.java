@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package at.fhooe.mcm.deadreckoning.filter;
 
 /**
@@ -16,86 +15,83 @@ package at.fhooe.mcm.deadreckoning.filter;
  * The application for which it is designed is cleaning up multi-dimensional sensor errors,
  * based on sensor noise, user input and measurement.
  */
-public class KalmanFilter implements IFilter{
+public class KalmanFilter implements IFilter {
 
     /** @brief Noise variance estimation in percent. */
-    private static float percentvar = 0.05f;
-
+    private static float PERCENT_VAR = 0.05f;
     /** @brief Filter gain. */
-    private static float gain = 0.8f;
-
+    private static float GAIN = 0.8f;
     /** @brief Noise variance. */
-    float[] noisevar;
-
+    float[] m_noisevar;
     /** @brief Corrected/filtered value. */
-    float[] corrected;
-
+    float[] m_corrected;
     /** @brief Predicted variance. */
-    float[] predictedvar;
-
+    float[] m_predictedvar;
     /** @brief Observed value due to measurement. */
-    float[] observed;
-
+    float[] m_observed;
     /** @brief The Kalman gain. */
-    float[] kalman;
-
-    /** @brief The corrected variance. */
-    float[] correctedvar;
-
-    /** @brief The predicted value. */
-    float[] predicted;
+    float[] m_kalman;
+    /** @brief The m_corrected variance. */
+    float[] m_correctedvar;
+    /** @brief The m_predicted value. */
+    float[] m_predicted;
 
     /**
      * @brief Initializes the filter with some initial values and defines the dimension used.
      *
-     * @param initialValues The values used for initialization.
-     * @param dimension The dimension of the filter.
+     * @param _initialValues The values used for initialization.
+     * @param _dimension The dimension of the filter.
      */
-    public void init(float[] initialValues, int dimension) {
+    public void init(float[] _initialValues, int _dimension) {
 
-        noisevar     = new float[dimension];
-        corrected    = new float[dimension];
-        predictedvar = new float[dimension];
-        observed     = new float[dimension];
-        kalman       = new float[dimension];
-        correctedvar = new float[dimension];
-        predicted    = new float[dimension];
+        m_noisevar = new float[_dimension];
+        m_corrected = new float[_dimension];
+        m_predictedvar = new float[_dimension];
+        m_observed = new float[_dimension];
+        m_kalman = new float[_dimension];
+        m_correctedvar = new float[_dimension];
+        m_predicted = new float[_dimension];
 
-        for(int i = 0; i < dimension; i++)
-            noisevar[i] = percentvar;
+        for (int i = 0; i < _dimension; i++) {
+            m_noisevar[i] = PERCENT_VAR;
+        }
 
-        predictedvar = noisevar;
-        predicted = initialValues;
+        m_predictedvar = m_noisevar;
+        m_predicted = _initialValues;
     }
 
     /**
      * @brief Updates the Kalman filter.
      *
-     * @param observedValue The value gained by measuring.
+     * @param _observedValue The value gained by measuring.
      */
-    public void update(float[] observedValue) {
+    public void update(float[] _observedValue) {
 
         // if dimensions do not match throw an exception
-        if(observedValue.length != observed.length)
+        if (_observedValue.length != m_observed.length) {
             throw new RuntimeException("Array dimensions do not match");
+        }
 
-        observed = observedValue;
+        m_observed = _observedValue;
 
         // compute the Kalman gain for each dimension
-        for(int i = 0; i < kalman.length; i++)
-            kalman[i] = predictedvar[i] / (predictedvar[i] + noisevar[i]);
+        for (int i = 0; i < m_kalman.length; i++) {
+            m_kalman[i] = m_predictedvar[i] / (m_predictedvar[i] + m_noisevar[i]);
+        }
 
         // update the sensor prediction with the measurement for each dimension
-        for(int i = 0; i < corrected.length; i++)
-            corrected[i] = gain * predicted[i] + (1.0f - gain) * observed[i] + kalman[i] * (observed[i] - predicted[i]);
+        for (int i = 0; i < m_corrected.length; i++) {
+            m_corrected[i] = GAIN * m_predicted[i] + (1.0f - GAIN) * m_observed[i] + m_kalman[i] * (m_observed[i] - m_predicted[i]);
+        }
 
         // update the variance estimation
-        for(int i = 0; i < correctedvar.length; i++)
-            correctedvar[i] = predictedvar[i] * (1.0f - kalman[i]);
+        for (int i = 0; i < m_correctedvar.length; i++) {
+            m_correctedvar[i] = m_predictedvar[i] * (1.0f - m_kalman[i]);
+        }
 
         // predict next variances and values
-        predictedvar = correctedvar;
-        predicted = corrected;
+        m_predictedvar = m_correctedvar;
+        m_predicted = m_corrected;
     }
 
     /**
@@ -104,6 +100,6 @@ public class KalmanFilter implements IFilter{
      * @return A float array storing the filtered values.
      */
     public float[] getCorrectedValues() {
-        return corrected;
+        return m_corrected;
     }
 }

@@ -16,88 +16,73 @@ import java.io.IOException;
  * @brief This class provides a deadreckoning algorithm based on inertial navigation techniques.
  *
  * This algorithm uses accelerometers to not calculate exact positions but to provide accurate
- * distance information. This algorithm only uses two axis of a accelerometer and does not depend
+ * m_distance information. This algorithm only uses two axis of a accelerometer and does not depend
  * on gyroscopes. For accuracy multiple filtering strategies are used.
  */
 public class InertialSensor {
+
     /** @brief The interface to access the Sun Spot's accelerometer. */
-    private IAccelerometer3D accel;
-
+    private IAccelerometer3D m_accel;
     /** @brief Storage for the current and the previous x-acceleration. */
-    float[] accelerationX;
-
+    float[] m_accelerationX;
     /** @brief Storage for the current and the previous y-acceleration. */
-    float[] accelerationY;
-    
-     /** @brief Storage for the current and the previous x-velocity. */
-    float[] velocityX;
-
-     /** @brief Storage for the current and the previous y-velocity. */
-    float[] velocityY;
-
-     /** @brief Storage for the current and the previous x-position. */
-    float[] positionX;
-
-     /** @brief Storage for the current and the previous y-position. */
-    float[] positionY;
-
+    float[] m_accelerationY;
+    /** @brief Storage for the current and the previous x-velocity. */
+    float[] m_velocityX;
+    /** @brief Storage for the current and the previous y-velocity. */
+    float[] m_velocityY;
+    /** @brief Storage for the current and the previous x-position. */
+    float[] m_positionX;
+    /** @brief Storage for the current and the previous y-position. */
+    float[] m_positionY;
     /** @brief Filter interface for a Kalman filter. */
-    IFilter kalmanFilter;
-
+    IFilter m_kalmanFilter;
     /** @brief Filter interface for a Kalman based lowpass filter. */
-    IFilter lowpassFilter;
-
+    IFilter m_lowpassFilter;
     /** @brief Last measured raw x-acceleration. */
-    float xAccelSample;
-
+    float m_xAccelSample;
     /** @brief Last measured raw y-acceleration. */
-    float yAccelSample;
-
+    float m_yAccelSample;
     /** @brief Counter to detect movement stops on the x-axis. */
-    float cntX;
-
+    float m_cntX;
     /** @brief Counter to detect movement stops on the y-axis. */
-    float cntY;
-
-    /** @brief The overall distance in meters. */
-    float distance;
-
+    float m_cntY;
+    /** @brief The overall m_distance in meters. */
+    float m_distance;
     /** @brief The sensor offset for the x-axis. */
-    float offsetX;
-
+    float m_offsetX;
     /** @brief The sensor offset for the y-axis. */
-    float offsetY;
-
+    float m_offsetY;
     /** @brief A flag to indicate if the the sensor is calibrated. */
-    boolean isCalibrated;
+    boolean m_isCalibrated;
 
     /**
      * @brief Creates a new instance of an <code>InertialSensor</code>
      */
     public InertialSensor() {
-        accelerationX = new float[2];
-        accelerationY = new float[2];
-        velocityX = new float[2];
-        velocityY = new float[2];
-        positionX = new float[2];
-        positionY = new float[2];
+        m_accelerationX = new float[2];
+        m_accelerationY = new float[2];
+        m_velocityX = new float[2];
+        m_velocityY = new float[2];
+        m_positionX = new float[2];
+        m_positionY = new float[2];
 
-        xAccelSample = 0;
-        yAccelSample = 0;
+        m_xAccelSample = 0;
+        m_yAccelSample = 0;
 
-        cntX  = 0;
-        cntY  = 0;
+        m_cntX = 0;
+        m_cntY = 0;
 
-        distance = 0;
+        m_distance = 0;
 
-        offsetX = 0;
-        offsetY = 0;
+        m_offsetX = 0;
+        m_offsetY = 0;
 
-        isCalibrated = false;
+        m_isCalibrated = false;
 
-        accel  = EDemoBoard.getInstance().getAccelerometer();
-        kalmanFilter = new KalmanFilter();
-        lowpassFilter = new LowpassFilter();
+        m_accel = EDemoBoard.getInstance().getAccelerometer();
+        m_kalmanFilter = new KalmanFilter();
+        m_lowpassFilter = new LowpassFilter();
     }
 
     /**
@@ -108,18 +93,18 @@ public class InertialSensor {
      *
      * @throws IOException
      */
-    public void calibrate() throws IOException{
+    public void calibrate() throws IOException {
 
-        for(int i = 0; i < 1024; i++) {
+        for (int i = 0; i < 1024; i++) {
             getSensorValues();
-              offsetX = offsetX + xAccelSample;
-              offsetY = offsetY + yAccelSample;
+            m_offsetX = m_offsetX + m_xAccelSample;
+            m_offsetY = m_offsetY + m_yAccelSample;
         }
 
-        offsetX /= 1024;
-        offsetY /= 1024;
+        m_offsetX /= 1024;
+        m_offsetY /= 1024;
 
-        isCalibrated = true;
+        m_isCalibrated = true;
     }
 
     /**
@@ -130,58 +115,59 @@ public class InertialSensor {
      *
      * @throws IOException
      */
-    public void init() throws IOException{
-        if(!isCalibrated)
+    public void init() throws IOException {
+        if (!m_isCalibrated) {
             calibrate();
-        
-        kalmanFilter.init(new float[] {xAccelSample - offsetX, yAccelSample - offsetY}, 2);
-        lowpassFilter.init(new float[] {positionX[1], positionY[1]}, 2);
+        }
+
+        m_kalmanFilter.init(new float[]{m_xAccelSample - m_offsetX, m_yAccelSample - m_offsetY}, 2);
+        m_lowpassFilter.init(new float[]{m_positionX[1], m_positionY[1]}, 2);
     }
 
     /**
      * @brief Updates the deadreckoning system.
      *
-     * This method updates current distance by filtering newly observed values,
-     * looks for movement ends and re-calculates the distance.
+     * This method updates current m_distance by filtering newly observed values,
+     * looks for movement ends and re-calculates the m_distance.
      *
-     * @param dt The time between the previous and the current update cylce in seconds.
+     * @param _dt The time between the previous and the current update cylce in seconds.
      * @throws IOException
      */
-    public void update(float dt) throws IOException{
+    public void update(float _dt) throws IOException {
         getSensorValues();
         filterAcceleration();
-        integrate(dt);
+        integrate(_dt);
         detectMovementEnd();
-        filterPosition();
+        //filterPosition();
         calculateDistance();
     }
 
     /**
-     * @brief Provides the caller with the current distance.
+     * @brief Provides the caller with the current m_distance.
      *
-     * @return The overall measured distance in meters.
+     * @return The overall measured m_distance in meters.
      */
     public float getDistance() {
-        return distance;
+        return m_distance;
     }
 
     /**
-     * @brief Updates the distance using position data.
+     * @brief Updates the m_distance using position data.
      *
      * This method computes the square root sum of position differences
      * between two update cycles to get the overall position change between
      * two frames.
      */
     private void calculateDistance() {
-        float posXdt = (positionX[1] - positionX[0]);
-        float posYdt = (positionY[1] - positionY[0]);
+        float posXdt = (m_positionX[1] - m_positionX[0]);
+        float posYdt = (m_positionY[1] - m_positionY[0]);
 
-        distance += Math.sqrt(posXdt * posXdt + posYdt * posYdt);
-        System.out.println("Distance: " + distance);
+        m_distance += Math.sqrt(posXdt * posXdt + posYdt * posYdt);
+        System.out.println("Distance: " + m_distance);
 
         // store current positions as previous values for the next integral step
-        positionX[0] = positionX[1];
-        positionY[0] = positionY[1];
+        m_positionX[0] = m_positionX[1];
+        m_positionY[0] = m_positionY[1];
     }
 
     /**
@@ -198,25 +184,22 @@ public class InertialSensor {
      * for stiff equations that have a larger h. In this case the Implicit Euler
      * Method could be used.
      *
-     * @param dtx The difference between the current and the previous frame in seconds.
+     * @param _dt The difference between the current and the previous frame in seconds.
      */
-    private void integrate(float dtx) {
+    private void integrate(float _dt) {
         // calculate new velocity
-        velocityX[1] = velocityX[0] + (accelerationX[1]) * dtx;
-        velocityY[1] = velocityY[0] + (accelerationY[1]) * dtx;
-
-
-        System.out.println("Velocity: " + velocityX[1] + " / " + velocityY[1]);
+        m_velocityX[1] = m_velocityX[0] + (m_accelerationX[1]) * _dt;
+        m_velocityY[1] = m_velocityY[0] + (m_accelerationY[1]) * _dt;
 
         // calculate new position
-        positionX[1] = positionX[0] + (velocityX[1]) * dtx;
-        positionY[1] = positionY[0] + (velocityY[1]) * dtx;
+        m_positionX[1] = m_positionX[0] + (m_velocityX[1]) * _dt;
+        m_positionY[1] = m_positionY[0] + (m_velocityY[1]) * _dt;
 
         // store current values as previous values for next integral step
-        accelerationX[0] = accelerationX[1];
-        accelerationY[0] = accelerationY[1];
-        velocityX[0] = velocityX[1];
-        velocityY[0] = velocityY[1];
+        m_accelerationX[0] = m_accelerationX[1];
+        m_accelerationY[0] = m_accelerationY[1];
+        m_velocityX[0] = m_velocityX[1];
+        m_velocityY[0] = m_velocityY[1];
     }
 
     /**
@@ -225,12 +208,12 @@ public class InertialSensor {
      * This method updates the lowpass filter and corrects the calculated positions.
      */
     private void filterPosition() {
-        lowpassFilter.update(new float[] { positionX[1],  positionY[1] });
+        m_lowpassFilter.update(new float[]{m_positionX[1], m_positionY[1]});
 
-        float[] tempPos = lowpassFilter.getCorrectedValues();
+        float[] tempPos = m_lowpassFilter.getCorrectedValues();
 
-        positionX[1] = tempPos[0];
-        positionY[1] = tempPos[1];
+        m_positionX[1] = tempPos[0];
+        m_positionY[1] = tempPos[1];
     }
 
     /**
@@ -243,53 +226,55 @@ public class InertialSensor {
      * gravity.
      */
     private void filterAcceleration() {
-         kalmanFilter.update(new float[] { xAccelSample-offsetX, yAccelSample-offsetY});
+        m_kalmanFilter.update(new float[]{m_xAccelSample - m_offsetX, m_yAccelSample - m_offsetY});
 
-        float[] temp = kalmanFilter.getCorrectedValues();
+        float[] temp = m_kalmanFilter.getCorrectedValues();
 
-        accelerationX[1] = temp[0];
-        accelerationY[1] = temp[1];
-
-                System.out.println("Accelera: " + accelerationX[1] + " / " + accelerationY[1]);
+        m_accelerationX[1] = temp[0];
+        m_accelerationY[1] = temp[1];
 
         /*
          * Create discrimination window for very small accelerations which would
          * be very slow movements. Additionally, assume that this sensor is used
          * by human people who are moving around on their own feet.
          */
-        if (((accelerationX[1] <=2.0) && (accelerationX[1] >= -2.0)) ||
-                ((accelerationX[1] >=5) || (accelerationX[1] <= -5)))
-            accelerationX[1] = 0;
+        if (((m_accelerationX[1] <= 3.0) && (m_accelerationX[1] >= -3.0))
+                || ((m_accelerationX[1] >= 5) || (m_accelerationX[1] <= -5))) {
+            m_accelerationX[1] = 0;
+        }
 
-        if (((accelerationY[1] <=2.0) && (accelerationY[1] >= -2.0)) ||
-                ((accelerationY[1] >=5) || (accelerationY[1] <= -5)))
-            accelerationY[1] = 0;
+        if (((m_accelerationY[1] <= 3.0) && (m_accelerationY[1] >= -3.0))
+                || ((m_accelerationY[1] >= 5) || (m_accelerationY[1] <= -5))) {
+            m_accelerationY[1] = 0;
+        }
     }
 
     /**
      * @brief Detects movement ends and sets the velocity to zero.
      */
     private void detectMovementEnd() {
-        if(accelerationX[1] == 0)
-            cntX++;
-        else
-            cntX = 0;
-
-        // 25 is an estimated threshold which can be adopted
-        if(cntX >= 5) {
-            velocityX[0] = 0;
-            velocityX[1] = 0;
+        if (m_accelerationX[1] == 0) {
+            m_cntX++;
+        } else {
+            m_cntX = 0;
         }
 
-        if(accelerationY[1] == 0)
-            cntY++;
-        else
-            cntY = 0;
+        // 25 is an estimated threshold which can be adopted
+        if (m_cntX >= 5) {
+            m_velocityX[0] = 0;
+            m_velocityX[1] = 0;
+        }
+
+        if (m_accelerationY[1] == 0) {
+            m_cntY++;
+        } else {
+            m_cntY = 0;
+        }
 
         // 25 is an estimated threshold which can be adopted
-        if(cntY >= 5) {
-            velocityY[0] = 0;
-            velocityY[1] = 0;
+        if (m_cntY >= 5) {
+            m_velocityY[0] = 0;
+            m_velocityY[1] = 0;
         }
     }
 
@@ -301,8 +286,7 @@ public class InertialSensor {
      * @throws IOException
      */
     private void getSensorValues() throws IOException {
-        xAccelSample = (float)accel.getAccelX() * 9.81f;
-        yAccelSample = (float)accel.getAccelY() * 9.81f;
+        m_xAccelSample = (float) m_accel.getAccelX() * 9.81f;
+        m_yAccelSample = (float) m_accel.getAccelY() * 9.81f;
     }
-
 }

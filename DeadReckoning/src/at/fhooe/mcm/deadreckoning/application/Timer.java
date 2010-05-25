@@ -15,33 +15,24 @@ public class Timer {
 
     /** @brief Maximum delta time in nanoseconds. */
     private static final long MAX_DELTATIME = 250;
-
     /** @brief Represents the duration of one milliseconds in seconds. */
     private static final double ONE_MILLISECOND = 0.001;
-
     /** @brief Represents the duration of one second in milliseconds. */
     private static final long ONE_SECOND = 1000;
-
     /** @brief Number of ticks used to calculate average delta time. */
     private static final int MAX_CNT_TICKS = 30;
-
     /** @brief Current time. */
-    private long time;
-
+    private long m_time;
     /** @brief Current delta time. */
-    private long dt;
-
+    private long m_dt;
     /** @brief Last time time stamp. */
-    private long last;
-
+    private long m_last;
     /** @brief Counter used to calculate average updates per second. */
-    private int cntTicks;
-
+    private int m_cntTicks;
     /** @brief Last time stamp used to calculate average updates per second. */
-    private long lastAvg;
-
+    private long m_lastAvg;
     /** @brief Average delta time. */
-    private long dtAvg;
+    private long m_dtAvg;
 
     /**
      * @brief Creates a new instance of <code>Timer</clock>.
@@ -56,13 +47,13 @@ public class Timer {
      * @brief Resets all values to zero.
      */
     public void reset() {
-        this.time = 0;
-        this.dt = 0;
-        this.last = System.currentTimeMillis();
+        this.m_time = 0;
+        this.m_dt = 0;
+        this.m_last = System.currentTimeMillis();
 
-        this.dtAvg = 0;
-        this.lastAvg = this.last;
-        this.cntTicks = MAX_CNT_TICKS;
+        this.m_dtAvg = 0;
+        this.m_lastAvg = this.m_last;
+        this.m_cntTicks = MAX_CNT_TICKS;
     }
 
     /**
@@ -74,22 +65,22 @@ public class Timer {
     public void tick() {
         // calculate new delta time and absolute time
         long now = System.currentTimeMillis();
-        dt = (now - last);
-        last = now;
+        m_dt = (now - m_last);
+        m_last = now;
 
-        if (dt > MAX_DELTATIME) {
-            dt = MAX_DELTATIME;
+        if (m_dt > MAX_DELTATIME) {
+            m_dt = MAX_DELTATIME;
         }
 
-        time += dt;
+        m_time += m_dt;
 
         // update average delta time used to calculate average updates per second
-        this.cntTicks--;
+        this.m_cntTicks--;
 
-        if (this.cntTicks <= 0) {
-            this.dtAvg = (now - this.lastAvg) / MAX_CNT_TICKS;
-            this.lastAvg = now;
-            this.cntTicks = MAX_CNT_TICKS;
+        if (this.m_cntTicks <= 0) {
+            this.m_dtAvg = (now - this.m_lastAvg) / MAX_CNT_TICKS;
+            this.m_lastAvg = now;
+            this.m_cntTicks = MAX_CNT_TICKS;
         }
     }
 
@@ -99,7 +90,7 @@ public class Timer {
      * @return Current delta time in seconds.
      */
     public double getDelta() {
-        return dt * ONE_MILLISECOND;
+        return m_dt * ONE_MILLISECOND;
     }
 
     /**
@@ -108,7 +99,7 @@ public class Timer {
      * @return Current absolute time in seconds.
      */
     public double getTime() {
-        return time * ONE_MILLISECOND;
+        return m_time * ONE_MILLISECOND;
     }
 
     /**
@@ -117,7 +108,7 @@ public class Timer {
      * @return Average updates in seconds.
      */
     public double getUps() {
-        return ONE_SECOND / this.dtAvg;
+        return ONE_SECOND / this.m_dtAvg;
     }
 
     /**
@@ -127,6 +118,6 @@ public class Timer {
      * seconds is available, <code>false</code> otherwise.
      */
     public boolean isNewUps() {
-        return this.cntTicks == MAX_CNT_TICKS;
+        return this.m_cntTicks == MAX_CNT_TICKS;
     }
 }

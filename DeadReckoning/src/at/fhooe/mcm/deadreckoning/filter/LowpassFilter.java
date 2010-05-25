@@ -11,68 +11,65 @@ package at.fhooe.mcm.deadreckoning.filter;
  * The application for which it is designed is cleaning up multi-dimensional sensor errors,
  * based on sensor noise, user input and measurement.
  */
-public class LowpassFilter implements IFilter{
+public class LowpassFilter implements IFilter {
 
     /** @brief Process noise covariance. */
-    private float[] correctedVar;
-
+    private float[] m_correctedVar;
     /** @brief Measurement noise covariance. */
-    private float[] noiseVar;
-
+    private float[] m_noiseVar;
     /** @brief The filtered value. */
-    private float[] corrected;
-
+    private float[] m_corrected;
     /** @brief Estimation error covariance. */
-    private float[] predictedvar;
-
+    private float[] m_predictedvar;
     /** @brief Kalman gain. */
-    private float[] kalman;
+    private float[] m_kalman;
 
     /**
      * @brief Initializes the filter with some initial values and defines the dimension used.
      *
-     * @param initialValues The values used for initialization.
-     * @param dimension The dimension of the filter.
+     * @param _initialValues The values used for initialization.
+     * @param _dimension The dimension of the filter.
      */
-    public void init(float[] initialValues, int dimension) {
-        correctedVar = new float[dimension];
-        noiseVar = new float[dimension];
-        corrected = new float[dimension];
-        predictedvar = new float[dimension];
-        kalman = new float[dimension];
+    public void init(float[] _initialValues, int _dimension) {
+        m_correctedVar = new float[_dimension];
+        m_noiseVar = new float[_dimension];
+        m_corrected = new float[_dimension];
+        m_predictedvar = new float[_dimension];
+        m_kalman = new float[_dimension];
 
-        for(int i = 0; i < dimension; i++) {
-            correctedVar[i] = 4f;
-            noiseVar[i] = 1f;
-            predictedvar[1] = 1f;
+        for (int i = 0; i < _dimension; i++) {
+            m_correctedVar[i] = 4f;
+            m_noiseVar[i] = 1f;
+            m_predictedvar[1] = 1f;
         }
 
-        corrected = initialValues;
+        m_corrected = _initialValues;
     }
 
-      /**
+    /**
      * @brief Updates the Kalman filter.
      *
      * @param observedValue The value gained by measuring.
      */
-    public void update(float[] observedValues) {
+    public void update(float[] _observedValues) {
 
         // if dimensions do not match throw an exception
-        if(corrected.length != observedValues.length)
+        if (m_corrected.length != _observedValues.length) {
             throw new RuntimeException("Array dimensions do not match");
+        }
 
-        for(int i = 0; i < predictedvar.length; i++) {
+        for (int i = 0; i < m_predictedvar.length; i++) {
 
-            predictedvar[i] = predictedvar[i] + correctedVar[i];
-                       
+            m_predictedvar[i] = m_predictedvar[i] + m_correctedVar[i];
+
             // calculate the Kalman gain
-            kalman[i] = predictedvar[i] / (predictedvar[i] + noiseVar[i]);
+            m_kalman[i] = m_predictedvar[i] / (m_predictedvar[i] + m_noiseVar[i]);
 
             // update the measurement
-            corrected[i] = corrected[i] + kalman[i] * (observedValues[i] - corrected[i]);
+            m_corrected[i] = m_corrected[i] + m_kalman[i] * (_observedValues[i] - m_corrected[i]);
 
             // update the prediction
-            predictedvar[i] = (1f - kalman[i]) * predictedvar[i];
+            m_predictedvar[i] = (1f - m_kalman[i]) * m_predictedvar[i];
         }
     }
 
@@ -82,7 +79,7 @@ public class LowpassFilter implements IFilter{
      * @return A float array storing the filtered values.
      */
     public float[] getCorrectedValues() {
-        return corrected;
+        return m_corrected;
     }
 }
 

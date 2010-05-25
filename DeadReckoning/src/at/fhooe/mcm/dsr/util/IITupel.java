@@ -2,20 +2,18 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package at.fhooe.mcm.dsr.util;
 
 /**
  *
  * @author Peter
  */
-public class IITupel
-{
+public class IITupel {
+
     private String m_initiator = "";
     private Integer m_id = new Integer(-1);
 
-    public IITupel(String _initiator, int _id)
-    {
+    public IITupel(String _initiator, int _id) {
         m_initiator = _initiator;
         m_id = new Integer(_id);
     }
@@ -36,20 +34,15 @@ public class IITupel
         this.m_initiator = _initiator;
     }
 
-    public boolean equals(Object _obj)
-    {
-        if(!(_obj instanceof IITupel))
-        {
+    public boolean equals(Object _obj) {
+        if (!(_obj instanceof IITupel)) {
             return false;
         }
-        IITupel _t = (IITupel)_obj;
-        return _t.getID().equals(getID())&&_t.getInitiator().equals(getInitiator());
+        IITupel _t = (IITupel) _obj;
+        return _t.getID().equals(getID()) && _t.getInitiator().equals(getInitiator());
     }
 
-    public String toString()
-    {
-        return m_initiator+":"+m_id;
+    public String toString() {
+        return m_initiator + ":" + m_id;
     }
-
-
 }
