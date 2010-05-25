@@ -20,7 +20,11 @@ import java.io.IOException;
  * on gyroscopes. For accuracy multiple filtering strategies are used.
  */
 public class InertialSensor {
+    
+    private static final float DISCRIMINATION_SIZE = 2.0f;
+    private static final float SLOWDOWN_THRESHOLD = 12.0f;
 
+    
     /** @brief The interface to access the Sun Spot's accelerometer. */
     private IAccelerometer3D m_accel;
     /** @brief Storage for the current and the previous x-acceleration. */
@@ -43,6 +47,8 @@ public class InertialSensor {
     float m_xAccelSample;
     /** @brief Last measured raw y-acceleration. */
     float m_yAccelSample;
+    /** @brief Last measured raw y-acceleration. */
+    float m_zAccelSample;
     /** @brief Counter to detect movement stops on the x-axis. */
     float m_cntX;
     /** @brief Counter to detect movement stops on the y-axis. */
@@ -53,8 +59,13 @@ public class InertialSensor {
     float m_offsetX;
     /** @brief The sensor offset for the y-axis. */
     float m_offsetY;
+    /** @brief The sensor offset for the y-axis. */
+    float m_offsetZ;
     /** @brief A flag to indicate if the the sensor is calibrated. */
     boolean m_isCalibrated;
+
+     float[] m_posXdt;
+     float[] m_posYdt;
 
     /**
      * @brief Creates a new instance of an <code>InertialSensor</code>
@@ -66,10 +77,12 @@ public class InertialSensor {
         m_velocityY = new float[2];
         m_positionX = new float[2];
         m_positionY = new float[2];
+        m_posXdt = new float[2];
+        m_posYdt = new float[2];
 
         m_xAccelSample = 0;
         m_yAccelSample = 0;
-
+        m_zAccelSample = 0;
         m_cntX = 0;
         m_cntY = 0;
 
@@ -77,6 +90,7 @@ public class InertialSensor {
 
         m_offsetX = 0;
         m_offsetY = 0;
+        m_offsetZ = 0;
 
         m_isCalibrated = false;
 
@@ -101,8 +115,10 @@ public class InertialSensor {
             m_offsetY = m_offsetY + m_yAccelSample;
         }
 
-        m_offsetX /= 1024;
         m_offsetY /= 1024;
+        m_offsetZ /= 1024;
+
+        m_offsetZ = m_zAccelSample - 9.81f;
 
         m_isCalibrated = true;
     }
@@ -159,8 +175,21 @@ public class InertialSensor {
      * two frames.
      */
     private void calculateDistance() {
-        float posXdt = (m_positionX[1] - m_positionX[0]);
-        float posYdt = (m_positionY[1] - m_positionY[0]);
+        m_posXdt[1] = m_positionX[1] - m_positionX[0];
+        m_posYdt[1] = m_positionY[1] - m_positionY[0];
+
+        if(m_posXdt[1] > 1.5)
+            m_posXdt[1] = (float)(m_posXdt[1] - ((int)m_posXdt[1]) + 1.0f);
+
+        if(m_posYdt[1] > 1.5)
+            m_posYdt[1] = (float)(m_posYdt[1] - ((int)m_posYdt[1]) + 1.0f);
+
+        float posXdt = (m_posXdt[1] + m_posXdt[0]) / 2.0f;
+        float posYdt = (m_posYdt[1] + m_posYdt[0]) / 2.0f;
+
+        m_posXdt[0] = m_posXdt[1];
+        m_posYdt[0] = m_posYdt[1];
+
 
         m_distance += Math.sqrt(posXdt * posXdt + posYdt * posYdt);
         System.out.println("Distance: " + m_distance);
@@ -187,13 +216,24 @@ public class InertialSensor {
      * @param _dt The difference between the current and the previous frame in seconds.
      */
     private void integrate(float _dt) {
+
+        float gravityOffset = m_zAccelSample / 9.81f;
+
+        // correct earth gravity
+        if(gravityOffset < 1f) {
+           if(m_accelerationX[1] > m_accelerationY[1])
+               m_accelerationX[1] *= (1f - gravityOffset);
+            else
+                m_accelerationY[1] *= (1f - gravityOffset);
+        }
+
         // calculate new velocity
-        m_velocityX[1] = m_velocityX[0] + (m_accelerationX[1]) * _dt;
-        m_velocityY[1] = m_velocityY[0] + (m_accelerationY[1]) * _dt;
+        m_velocityX[1] = m_velocityX[0] + ((m_accelerationX[0] + m_accelerationX[1]) / 2f) * _dt;
+        m_velocityY[1] = m_velocityY[0] + ((m_accelerationX[0] + m_accelerationY[1]) / 2f) * _dt;
 
         // calculate new position
-        m_positionX[1] = m_positionX[0] + (m_velocityX[1]) * _dt;
-        m_positionY[1] = m_positionY[0] + (m_velocityY[1]) * _dt;
+        m_positionX[1] = m_positionX[0] + ((m_velocityX[0] + m_velocityX[1]) / 2f) * _dt;
+        m_positionY[1] = m_positionY[0] + ((m_velocityY[0] + m_velocityY[1]) / 2f) * _dt;
 
         // store current values as previous values for next integral step
         m_accelerationX[0] = m_accelerationX[1];
@@ -238,13 +278,13 @@ public class InertialSensor {
          * be very slow movements. Additionally, assume that this sensor is used
          * by human people who are moving around on their own feet.
          */
-        if (((m_accelerationX[1] <= 3.0) && (m_accelerationX[1] >= -3.0))
-                || ((m_accelerationX[1] >= 5) || (m_accelerationX[1] <= -5))) {
+        if (((m_accelerationX[1] <= DISCRIMINATION_SIZE) && (m_accelerationX[1] >= -DISCRIMINATION_SIZE))
+                || ((m_accelerationX[1] >= 6) || (m_accelerationX[1] <= -6))) {
             m_accelerationX[1] = 0;
         }
 
-        if (((m_accelerationY[1] <= 3.0) && (m_accelerationY[1] >= -3.0))
-                || ((m_accelerationY[1] >= 5) || (m_accelerationY[1] <= -5))) {
+        if (((m_accelerationY[1] <= DISCRIMINATION_SIZE) && (m_accelerationY[1] >= -DISCRIMINATION_SIZE))
+                || ((m_accelerationY[1] >= 6) || (m_accelerationY[1] <= -6))) {
             m_accelerationY[1] = 0;
         }
     }
@@ -260,11 +300,9 @@ public class InertialSensor {
         }
 
         // 25 is an estimated threshold which can be adopted
-        if (m_cntX >= 15) {
+        if (m_cntX >= SLOWDOWN_THRESHOLD) {
             m_velocityX[0] = 0;
-            m_velocityX[1] = 0;
-
-             System.out.println("Fuck1");
+            m_velocityX[1] = 0;       
         }
 
         if (m_accelerationY[1] == 0) {
@@ -274,11 +312,9 @@ public class InertialSensor {
         }
 
         // 25 is an estimated threshold which can be adopted
-        if (m_cntY >= 15) {
+        if (m_cntY >= SLOWDOWN_THRESHOLD) {
             m_velocityY[0] = 0;
             m_velocityY[1] = 0;
-
-            System.out.println("Fuck2");
         }
     }
 
@@ -292,5 +328,6 @@ public class InertialSensor {
     private void getSensorValues() throws IOException {
         m_xAccelSample = (float) m_accel.getAccelX() * 9.81f;
         m_yAccelSample = (float) m_accel.getAccelY() * 9.81f;
+        m_zAccelSample = (float) m_accel.getAccelZ() * 9.81f;
     }
 }
