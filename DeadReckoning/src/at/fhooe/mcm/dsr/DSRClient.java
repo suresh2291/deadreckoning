@@ -209,12 +209,12 @@ public class DSRClient
         }
         else if(msg.startsWith("[RREQ]"))
         {
-            System.out.println("RREQ discovered");
+            System.out.println("[RREQ] discovered");
             RREQPkg pkg = new RREQPkg(msg);
             IITupel tupel = pkg.getIITupel();
             if(m_reqTable.contains(tupel))
             {
-                System.out.println("request ignored");
+                System.out.println("[RREQ] ignored");
                 return;
             }
             else if(pkg.getTargetAddress().equals(getOwnAddress()))
@@ -222,14 +222,15 @@ public class DSRClient
                 sendRREPTarget(pkg.getRouteRecord());
                 m_reqTable.addTupel(tupel);
             }
-            /*else if(m_routeTable.contains(pkg.getTargetAddress()))
+            else if(m_routeTable.contains(pkg.getTargetAddress()))
             {
                 sendRREPRouteToTarget(pkg.getRouteRecord(), pkg.getTargetAddress());
                 m_reqTable.addTupel(tupel);
-            }*/
+            }
             else
             {
                 System.out.println("forwarding RREQ");
+                m_reqTable.addTupel(tupel);
                 /*RouteRecord r = pkg.getRouteRecord();
                 r.addNodeAddr(getOwnAddress());
                 sendBroadcast(new RREQPkg(pkg, r).toString());*/
@@ -241,7 +242,7 @@ public class DSRClient
         }
         else if(msg.startsWith("[RREP]"))
         {
-            System.out.println("RREP discovered");
+            //System.out.println("RREP discovered");
             RREPPkg pkg = new RREPPkg(msg);
             if(pkg.getRouteRecord().getInitiator().equals(getOwnAddress()))
             {
@@ -251,22 +252,22 @@ public class DSRClient
             }
             else
             {
-                System.out.println("forwarding rrep");
                 forwardRREP(pkg);
+                System.out.println("[RREP] forwarded");
             }
             System.out.println(msg);
         }
         else if(msg.startsWith("[DATA]"))
         {
             DataPkg pkg = new DataPkg(msg);
-            System.out.println("###target:"+pkg.getRouteRecord().getTarget());
             if(pkg.getRouteRecord().getTarget().equals(getOwnAddress()))
             {
-                System.out.println("##########Data received:"+msg.substring(msg.indexOf("]")+1));
+                System.out.println("###[DATA] received:"+msg.substring(msg.indexOf("]")+1));
             }
             else
             {
                 forwardData(pkg);
+                System.out.println("[DATA] forwarded");
             }
         }
     }
