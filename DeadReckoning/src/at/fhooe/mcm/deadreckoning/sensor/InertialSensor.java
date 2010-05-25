@@ -254,12 +254,12 @@ public class InertialSensor {
          * maximum speed of a human beeing while running over a longer period of
          * time is about 20 km/h ~ 5 m/s.
          */
-        if (((accelerationX[1] <=3) && (accelerationX[1] >= -3)) ||
-                ((accelerationX[1] >=6) || (accelerationX[1] <= -6)))
+        if (((accelerationX[1] <=1.5) && (accelerationX[1] >= -1.5)) ||
+                ((accelerationX[1] >=5) || (accelerationX[1] <= -5)))
             accelerationX[1] = 0;
 
-        if (((accelerationY[1] <=3) && (accelerationY[1] >= -3)) ||
-                ((accelerationX[1] >=6) || (accelerationX[1] <= -6)))
+        if (((accelerationY[1] <=1.5) && (accelerationY[1] >= -1.5)) ||
+                ((accelerationY[1] >=5) || (accelerationY[1] <= -5)))
             accelerationY[1] = 0;
     }
 
