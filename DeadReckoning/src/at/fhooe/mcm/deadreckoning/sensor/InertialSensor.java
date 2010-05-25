@@ -205,6 +205,9 @@ public class InertialSensor {
         velocityX[1] = velocityX[0] + (accelerationX[1]) * dtx;
         velocityY[1] = velocityY[0] + (accelerationY[1]) * dtx;
 
+
+        System.out.println("Velocity: " + velocityX[1] + " / " + velocityY[1]);
+
         // calculate new position
         positionX[1] = positionX[0] + (velocityX[1]) * dtx;
         positionY[1] = positionY[0] + (velocityY[1]) * dtx;
@@ -247,18 +250,18 @@ public class InertialSensor {
         accelerationX[1] = temp[0];
         accelerationY[1] = temp[1];
 
+                System.out.println("Accelera: " + accelerationX[1] + " / " + accelerationY[1]);
+
         /*
          * Create discrimination window for very small accelerations which would
          * be very slow movements. Additionally, assume that this sensor is used
-         * by human people who are moving around on their own feet. The averaged
-         * maximum speed of a human beeing while running over a longer period of
-         * time is about 20 km/h ~ 5 m/s.
+         * by human people who are moving around on their own feet.
          */
-        if (((accelerationX[1] <=1.5) && (accelerationX[1] >= -1.5)) ||
+        if (((accelerationX[1] <=2.0) && (accelerationX[1] >= -2.0)) ||
                 ((accelerationX[1] >=5) || (accelerationX[1] <= -5)))
             accelerationX[1] = 0;
 
-        if (((accelerationY[1] <=1.5) && (accelerationY[1] >= -1.5)) ||
+        if (((accelerationY[1] <=2.0) && (accelerationY[1] >= -2.0)) ||
                 ((accelerationY[1] >=5) || (accelerationY[1] <= -5)))
             accelerationY[1] = 0;
     }
