@@ -138,7 +138,7 @@ public class InertialSensor {
         filterAcceleration();
         integrate(_dt);
         detectMovementEnd();
-        //filterPosition();
+        filterPosition();
         calculateDistance();
     }
 
@@ -260,9 +260,11 @@ public class InertialSensor {
         }
 
         // 25 is an estimated threshold which can be adopted
-        if (m_cntX >= 5) {
+        if (m_cntX >= 15) {
             m_velocityX[0] = 0;
             m_velocityX[1] = 0;
+
+             System.out.println("Fuck1");
         }
 
         if (m_accelerationY[1] == 0) {
@@ -272,9 +274,11 @@ public class InertialSensor {
         }
 
         // 25 is an estimated threshold which can be adopted
-        if (m_cntY >= 5) {
+        if (m_cntY >= 15) {
             m_velocityY[0] = 0;
             m_velocityY[1] = 0;
+
+            System.out.println("Fuck2");
         }
     }
 
