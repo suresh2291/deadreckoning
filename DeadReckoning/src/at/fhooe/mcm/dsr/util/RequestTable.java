@@ -23,10 +23,10 @@ public class RequestTable
 
     public boolean contains(IITupel _tupel)
     {
-        System.out.println("checking tupel:"+_tupel.toString());
+        //System.out.println("checking tupel:"+_tupel.toString());
         for(int i =0;i<m_requests.size();i++)
         {
-            System.out.println("against:"+((IITupel)m_requests.elementAt(i)).toString());
+            //System.out.println("against:"+((IITupel)m_requests.elementAt(i)).toString());
             if(((IITupel)m_requests.elementAt(i)).equals(_tupel))
             {
                 return true;
