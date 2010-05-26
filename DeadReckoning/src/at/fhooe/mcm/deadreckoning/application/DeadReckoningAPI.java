@@ -1,5 +1,6 @@
 package at.fhooe.mcm.deadreckoning.application;
 
+import at.fhooe.mcm.deadreckoning.Communication.DistanceSync;
 import at.fhooe.mcm.deadreckoning.sensor.InertialSensor;
 import at.fhooe.mcm.dsr.DSRClient;
 import com.sun.spot.util.Utils;
@@ -14,6 +15,7 @@ public class DeadReckoningAPI extends MIDlet {
 
     private DSRClient m_dsr = new DSRClient();
     InertialSensor m_sensor;
+    DistanceSync m_distSync = new DistanceSync(m_sensor);
     Timer m_clock;
 
     /**
@@ -31,6 +33,7 @@ public class DeadReckoningAPI extends MIDlet {
             m_sensor.update((float) m_clock.getDelta());
             if (i % 20 == 0) {
                 m_dsr.sendData("" + m_sensor.getDistance(), "0014.4F01.0000.6EF0");
+                System.out.println(m_distSync.getAverage(i));
             }
             Utils.sleep(50);
             m_clock.tick();
