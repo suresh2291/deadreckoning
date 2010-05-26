@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-/**/
+/*test*/
 package at.fhooe.mcm.dsr;
 
 import at.fhooe.mcm.dsr.packages.DataPkg;
