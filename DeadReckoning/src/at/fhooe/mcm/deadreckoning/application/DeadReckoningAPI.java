@@ -15,7 +15,7 @@ public class DeadReckoningAPI extends MIDlet {
 
     private DSRClient m_dsr = new DSRClient();
     InertialSensor m_sensor;
-    DistanceSync m_distSync = new DistanceSync(m_sensor);
+    DistanceSync m_distSync = null;
     Timer m_clock;
 
     /**
@@ -28,6 +28,7 @@ public class DeadReckoningAPI extends MIDlet {
 
         m_sensor.calibrate();
         m_sensor.init();
+        m_distSync = new DistanceSync(m_sensor);
         int i = 0;
         for (;; i++) {
             m_sensor.update((float) m_clock.getDelta());
