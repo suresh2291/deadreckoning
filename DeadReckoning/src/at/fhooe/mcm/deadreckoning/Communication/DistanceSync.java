@@ -92,7 +92,7 @@ public class DistanceSync {
                         dg.reset();
                         dgConnection.receive(dg);
                         tmp = dg.readUTF();
-                        if (tmp.substring(0, 4).equals("DIST:")) {
+                        if (tmp.substring(0, 5).equals("DIST:")) {
                             m_foreigndist = Float.parseFloat(tmp.substring(5));
                             m_owndist = m_sensor.getDistance();
                             m_avg = (m_foreigndist + m_owndist) / 2;
