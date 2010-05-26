@@ -16,7 +16,6 @@ import com.sun.spot.io.j2me.radiogram.Radiogram;
 import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
 import com.sun.spot.peripheral.NoRouteException;
 import com.sun.spot.peripheral.radio.RadioFactory;
-import com.sun.spot.peripheral.radio.routing.RoutingPolicy;
 import com.sun.spot.sensorboard.EDemoBoard;
 import com.sun.spot.sensorboard.peripheral.ITriColorLED;
 import com.sun.spot.sensorboard.peripheral.LEDColor;
@@ -34,7 +33,7 @@ public class DSRClient
 {
     private static final int DISCOVERY_TIMEOUT = 10000;
     private static final String ADDRESS_START = "0014.4F01.";
-    private static final int ROUTE_DISCOVERY_TIMEOUT = 2000;
+    private static final int ROUTE_REQUEST_TIMEOUT = 500;
     private static final int BLINK_TIME = 500;
    
     private int m_lastRRQID = 0;
@@ -117,7 +116,7 @@ public class DSRClient
                     System.out.println("route was not in table");
                     performRREQ(_addr);
                     try {
-                        Thread.sleep(ROUTE_DISCOVERY_TIMEOUT);
+                        Thread.sleep(ROUTE_REQUEST_TIMEOUT);
                     } catch (InterruptedException ex) {
                         ex.printStackTrace();
                     }
@@ -310,12 +309,12 @@ public class DSRClient
     private void sendDataOverRoute(String _data, RouteRecord _rr)
     {
         String addr = _rr.getNextHop(getOwnAddress());
-        sendDataThreaded(_data, m_baseAddr+addr+":"+m_port);
+        sendDataToTarget(_data, m_baseAddr+addr+":"+m_port);
     }
 
     private void sendPingACK(String _addr)
     {
-        sendDataThreaded("ack", _addr);
+        sendDataToTarget("ack", _addr);
     }
 
     private void broadcastPing()
@@ -354,10 +353,10 @@ public class DSRClient
 
     public void sendBroadcast(String _msg)
     {
-        sendDataThreaded(_msg, m_broadcastAddr);
+        sendDataToTarget(_msg, m_broadcastAddr);
     }
 
-    private void sendDataThreaded(final String _msg, final String _addr)
+    private synchronized void sendDataToTarget(final String _msg, final String _addr)
     {
 
        // new Thread()
