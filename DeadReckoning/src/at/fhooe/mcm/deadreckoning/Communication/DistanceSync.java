@@ -28,10 +28,13 @@ public class DistanceSync {
     private DistanceSync() {
     }
 
-    public DistanceSync(InertialSensor _sensor) {
+    public DistanceSync(InertialSensor _sensor)
+    {
+        m_sensor = _sensor;
+        /*
         rConnection = new DataInputOutputStreamConnection();
         rConnection.connect("broadcast");
-        m_sensor = _sensor;
+        
         m_receiveAndSend = new Thread() {
 
             public void run() {
@@ -61,6 +64,7 @@ public class DistanceSync {
             }
         };
         m_receiveAndSend.start();
+         */
     }
 
     public void startReceiverThread() {
@@ -143,7 +147,8 @@ public class DistanceSync {
         }.start();
     }
 
-    public float getAverage(float _dist) {
-        return 0;
+    public float getAverage(float _dist)
+    {
+        return m_avg;
     }
 }
