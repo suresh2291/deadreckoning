@@ -19,17 +19,20 @@ import javax.microedition.io.DatagramConnection;
  */
 public class DistanceSync {
 
-    private DataInputOutputStreamConnection rConnection = null;
-    Thread m_receiveAndSend = null;
-    boolean m_runThread = true;
-    InertialSensor m_sensor = null;
-    float m_avg = 0;
+    private boolean m_runThread = true;
+    private InertialSensor m_sensor = null;
+    private float m_owndist = 0;
+    private float m_foreigndist = 0;
+    private float m_avg = 0;
 
     private DistanceSync() {
     }
 
     public DistanceSync(InertialSensor _sensor) {
         m_sensor = _sensor;
+
+        startSenderThread();
+        startReceiverThread();
         /*
         rConnection = new DataInputOutputStreamConnection();
         rConnection.connect("broadcast");
@@ -90,10 +93,9 @@ public class DistanceSync {
                         dgConnection.receive(dg);
                         tmp = dg.readUTF();
                         if (tmp.substring(0, 4).equals("DIST:")) {
-                            float foreigndist = Float.parseFloat(tmp.substring(5));
-                            float owndist = m_sensor.getDistance();
-                            m_avg = (foreigndist + owndist) / 2;
-                            rConnection.send("AVG:" + m_avg, 0);
+                            m_foreigndist = Float.parseFloat(tmp.substring(5));
+                            m_owndist = m_sensor.getDistance();
+                            m_avg = (m_foreigndist + m_owndist) / 2;
                         }
                         System.out.println("Received: " + tmp + " from " + dg.getAddress());
                     } catch (NumberFormatException _nfe) {
