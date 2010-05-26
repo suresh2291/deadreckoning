@@ -15,9 +15,8 @@ import java.io.IOException;
  */
 public class DistanceSync
 {
-    private final String REMOTE_SPOT_ADDRESS = "0014.4F01.0000.0221";
     private DataInputOutputStreamConnection rConnection = null;
-    //private RadioOutputStreamConnection rosConnection = null;
+    private RadioOutputStreamConnection rosConnection = null;
     
     Thread m_receiveAndSend = null;
     boolean m_runThread = true;
@@ -49,7 +48,7 @@ public class DistanceSync
                             float foreigndist = Float.parseFloat(recv.substring(5));
                             float owndist = m_sensor.getDistance();
                             m_avg = (foreigndist+owndist)/2;
-                            rConnection.send("AVG:"+avg, 0);
+                            rConnection.send("AVG:"+m_avg, 0);
                         }
                         catch (NumberFormatException _nfe)
                         {
@@ -58,6 +57,10 @@ public class DistanceSync
                         catch (IOException _ioe)
                         {
                             _ioe.printStackTrace();
+                        }
+                        catch (NullPointerException _nex)
+                        {
+                            _nex.printStackTrace();
                         }
                     }
                 }
@@ -80,7 +83,7 @@ public class DistanceSync
             {
                 try
                 {
-                    float avg = Float.parseFloat(recv.substring(4));
+                    m_avg = Float.parseFloat(recv.substring(4));
                 }
             }
             //recv = rConnection.receive();
