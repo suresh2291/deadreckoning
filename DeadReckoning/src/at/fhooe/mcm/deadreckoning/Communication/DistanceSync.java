@@ -28,8 +28,7 @@ public class DistanceSync {
     private DistanceSync() {
     }
 
-    public DistanceSync(InertialSensor _sensor)
-    {
+    public DistanceSync(InertialSensor _sensor) {
         m_sensor = _sensor;
         /*
         rConnection = new DataInputOutputStreamConnection();
@@ -37,31 +36,31 @@ public class DistanceSync {
         
         m_receiveAndSend = new Thread() {
 
-            public void run() {
-                String recv = "";
-                while (m_runThread) {
-                    recv = rConnection.receive();
-                    if (recv.substring(0, 4).equals("DIST:")) {
-                        try {
-                            float foreigndist = Float.parseFloat(recv.substring(5));
-                            float owndist = m_sensor.getDistance();
-                            m_avg = (foreigndist + owndist) / 2;
-                            rConnection.send("AVG:" + m_avg, 0);
-                        } catch (NumberFormatException _nfe) {
-                            _nfe.printStackTrace();
-                        } catch (IOException _ioe) {
-                            _ioe.printStackTrace();
-                        } catch (NullPointerException _nex) {
-                            _nex.printStackTrace();
-                        }
-                    }
-                }
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-            }
+        public void run() {
+        String recv = "";
+        while (m_runThread) {
+        recv = rConnection.receive();
+        if (recv.substring(0, 4).equals("DIST:")) {
+        try {
+        float foreigndist = Float.parseFloat(recv.substring(5));
+        float owndist = m_sensor.getDistance();
+        m_avg = (foreigndist + owndist) / 2;
+        rConnection.send("AVG:" + m_avg, 0);
+        } catch (NumberFormatException _nfe) {
+        _nfe.printStackTrace();
+        } catch (IOException _ioe) {
+        _ioe.printStackTrace();
+        } catch (NullPointerException _nex) {
+        _nex.printStackTrace();
+        }
+        }
+        }
+        try {
+        Thread.sleep(500);
+        } catch (InterruptedException ex) {
+        ex.printStackTrace();
+        }
+        }
         };
         m_receiveAndSend.start();
          */
@@ -91,22 +90,18 @@ public class DistanceSync {
                         dgConnection.receive(dg);
                         tmp = dg.readUTF();
                         if (tmp.substring(0, 4).equals("DIST:")) {
-                            try {
-                                float foreigndist = Float.parseFloat(tmp.substring(5));
-                                float owndist = m_sensor.getDistance();
-                                m_avg = (foreigndist + owndist) / 2;
-                                rConnection.send("AVG:" + m_avg, 0);
-                            } catch (NumberFormatException _nfe) {
-                                _nfe.printStackTrace();
-                            } catch (IOException _ioe) {
-                                _ioe.printStackTrace();
-                            } catch (NullPointerException _nex) {
-                                _nex.printStackTrace();
-                            }
+                            float foreigndist = Float.parseFloat(tmp.substring(5));
+                            float owndist = m_sensor.getDistance();
+                            m_avg = (foreigndist + owndist) / 2;
+                            rConnection.send("AVG:" + m_avg, 0);
                         }
                         System.out.println("Received: " + tmp + " from " + dg.getAddress());
-                    } catch (IOException e) {
-                        System.out.println("Nothing received");
+                    } catch (NumberFormatException _nfe) {
+                        _nfe.printStackTrace();
+                    } catch (IOException _ioe) {
+                        _ioe.printStackTrace();
+                    } catch (NullPointerException _nex) {
+                        _nex.printStackTrace();
                     }
                 }
             }
@@ -147,8 +142,7 @@ public class DistanceSync {
         }.start();
     }
 
-    public float getAverage(float _dist)
-    {
+    public float getAverage(float _dist) {
         return m_avg;
     }
 }
