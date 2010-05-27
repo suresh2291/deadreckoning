@@ -192,7 +192,7 @@ public class InertialSensor {
 
 
         m_distance += Math.sqrt(posXdt * posXdt + posYdt * posYdt);
-        System.out.println("Distance: " + m_distance);
+        //System.out.println("Distance: " + m_distance);
 
         // store current positions as previous values for the next integral step
         m_positionX[0] = m_positionX[1];
