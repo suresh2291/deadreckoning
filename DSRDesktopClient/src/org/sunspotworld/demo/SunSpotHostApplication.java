@@ -41,7 +41,7 @@ static DeadReckoningInfoGUI g = new DeadReckoningInfoGUI();
     private static void testGUI()
     {
         StringBuffer buff = new StringBuffer();
-        for(double i =0;;i=i+0.1)
+        for(double i =0d;;i=i+0.1d)
         {
           for(int j = 0;j<14;j++)
           {
