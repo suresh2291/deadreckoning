@@ -1,93 +1,179 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package at.fhooe.mcm.dsr.packages;
 
 import at.fhooe.mcm.dsr.util.IITupel;
 import at.fhooe.mcm.dsr.util.RouteRecord;
 
 /**
+ * @class RREQPkg
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @version 1.0
  *
- * @author Peter
+ * @brief this class represents a RREQ package used by DSR
+ *
+ * Container for a RREQ package in DSR. It contains the initiator, the target, a
+ * RouteRecord and an id
+ *
  */
-public class RREQPkg {
-
+public class RREQPkg
+{
+    /**@brief the initiator of the RREQ*/
     private String m_initiator = "";
+    /**@brief the target of the RREQ*/
     private String m_target = "";
+    /**@brief the route record of the RREQ*/
     private RouteRecord m_route = null;
+    /**@brief the ID of the RREQ*/
     private int m_id = -1;
 
-    public RREQPkg() {
+    /**
+     * instantiates an empty RREQ package
+     */
+    public RREQPkg()
+    {
         setID(0);
         setInitiator("");
         setRouteRecord(new RouteRecord());
         setTargetAddress("");
     }
 
-    public RREQPkg(String _initiator, String _target, RouteRecord _rRec, int _id) {
+    /**
+     * instantiates a new RREQ package with passed initiator, target, route record
+     * and ID
+     * @param _initiator the initiator of the RREQ
+     * @param _target the target of the RREQ
+     * @param _rr the route record of the RREQ
+     * @param _id the ID of the RREQ
+     */
+    public RREQPkg(String _initiator, String _target, RouteRecord _rr, int _id)
+    {
         m_initiator = _initiator;
         m_target = _target;
-        m_route = _rRec;
+        m_route = _rr;
         m_id = _id;
     }
 
-    public RREQPkg(String _pkg) {
+    /**
+     * instantiates a new RREQ package from the passed string representation of
+     * a RREQ package
+     * @param _pkg
+     */
+    public RREQPkg(String _pkg)
+    {
         parseRREQPkg(_pkg);
-        System.out.println(toString());
     }
 
-    public RREQPkg(RREQPkg _pkg) {
+    /**
+     * copy constructor of a RREQ package
+     * @param _pkg the RREQ package to copy
+     */
+    public RREQPkg(RREQPkg _pkg)
+    {
         setInitiator(_pkg.getInitiator());
         setTargetAddress(_pkg.getTargetAddress());
         setRouteRecord(_pkg.getRouteRecord());
         setID(_pkg.getID());
     }
 
-    public RREQPkg(RREQPkg _pkg, RouteRecord _rr) {
+    /**
+     * copy constructor of a RREQ package with altered RouteRecord
+     * @param _pkg the RREQ package to copy
+     * @param _rr the new RouteRecord
+     */
+    public RREQPkg(RREQPkg _pkg, RouteRecord _rr)
+    {
         setInitiator(_pkg.getInitiator());
         setTargetAddress(_pkg.getTargetAddress());
         setRouteRecord(_rr);
         setID(_pkg.getID());
     }
 
-    public int getID() {
+    /**
+     * provides the ID of the package
+     * @return the ID of the package
+     */
+    public int getID()
+    {
         return m_id;
     }
 
-    public void setID(int _id) {
+    /**
+     * sets the passed integer as ID for the package
+     * @param _id the integer representing the ID
+     */
+    public void setID(int _id)
+    {
         this.m_id = _id;
     }
 
-    public String getInitiator() {
+    /**
+     * provides the initiator of the package
+     * @return the address of the initiator of the package
+     */
+    public String getInitiator()
+    {
         return m_initiator;
     }
 
-    public void setInitiator(String _initiator) {
+    /**
+     * sets the passed string as initiator of the package
+     * @param _initiator the address of the initiator
+     */
+    public void setInitiator(String _initiator)
+    {
         this.m_initiator = _initiator;
     }
 
-    public RouteRecord getRouteRecord() {
+    /**
+     * provides the RouteRecord of the RREQ package
+     * @return the RouteRecord of the RREQ package
+     */
+    public RouteRecord getRouteRecord()
+    {
         return m_route;
     }
 
-    public void setRouteRecord(RouteRecord _route) {
+    /**
+     * sets the passed RouteRecord as the RouteRecord of the RREQ
+     * @param _route the RouteRecord of the RREQ
+     */
+    public void setRouteRecord(RouteRecord _route)
+    {
         this.m_route = _route;
     }
 
-    public String getTargetAddress() {
+    /**
+     * provides the target address of the RREQ package
+     * @return the target address of the RREQ package
+     */
+    public String getTargetAddress()
+    {
         return m_target;
     }
 
-    public void setTargetAddress(String _target) {
+    /**
+     * sets the target address of a RREQ package
+     * @param _target the target address of a RREQ package
+     */
+    public void setTargetAddress(String _target)
+    {
         this.m_target = _target;
     }
 
-    public IITupel getIITupel() {
+    /**
+     * provides the IITupel of a RREQ package
+     * @return the IITupel of the RREQ package
+     */
+    public IITupel getIITupel()
+    {
         return new IITupel(getInitiator(), getID());
     }
 
-    public String toString() {
+    /**
+     * provides a string representation of the RREQ package
+     * @return the string representation of the RREQ package
+     */
+    public String toString()
+    {
         StringBuffer b = new StringBuffer("[RREQ]");
         b.append(m_initiator);
         b.append(";");
@@ -99,10 +185,18 @@ public class RREQPkg {
         return b.toString();
     }
 
-    private void parseRREQPkg(String _pkg) {
+    /**
+     * @brief parses the string representation of a RREQ package
+     * assures the passed string is a representation of a RREQ package and
+     * extracts the initiator, the target, the RouteRecord and the ID from the package
+     * @param _pkg the string representation of the RREQ package
+     */
+    private void parseRREQPkg(String _pkg)
+    {
         int nextDividerIdx = 0;
         String buff = _pkg;
-        if (!buff.startsWith("[RREQ]")) {
+        if (!buff.startsWith("[RREQ]"))
+        {
             return;
         }
 

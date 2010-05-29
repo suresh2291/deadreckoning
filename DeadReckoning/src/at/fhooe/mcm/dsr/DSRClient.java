@@ -111,20 +111,24 @@ public class DSRClient
      */
     public DSRClient()
     {
-        new Thread() {
-            public void run () {
+        new Thread()
+        {
+            public void run ()
+            {
                 indicateProgramRunning();
             }
         }.start();
 
-        new Thread(){
+        new Thread()
+        {
             public void run()
             {
                 rcvLoop();
             }
         }.start();
 
-        new Thread(){
+        new Thread()
+        {
             public void run()
             {
                 //discoverNodesInRange();
@@ -152,9 +156,12 @@ public class DSRClient
                 {
                     System.out.println("route was not in table");
                     performRREQ(_addr);
-                    try {
+                    try
+                    {
                         Thread.sleep(ROUTE_REQUEST_TIMEOUT);
-                    } catch (InterruptedException ex) {
+                    } 
+                    catch (InterruptedException ex)
+                    {
                         ex.printStackTrace();
                     }
                 }
@@ -246,9 +253,12 @@ public class DSRClient
     private void processReceivedMessage(Radiogram _rrg)
     {
         String msg = "";
-        try {
+        try
+        {
             msg = _rrg.readUTF();
-        } catch (IOException ex) {
+        } 
+        catch (IOException ex)
+        {
             ex.printStackTrace();
         }
         if(msg.equals("ping"))
@@ -500,9 +510,12 @@ public class DSRClient
             {
                 m_leds[_ledIdx].setColor(_col);
                 m_leds[_ledIdx].setOn();
-                try {
+                try
+                {
                     Thread.sleep(BLINK_TIME);
-                } catch (InterruptedException ex) {
+                } 
+                catch (InterruptedException ex)
+                {
                     ex.printStackTrace();
                 }
                 m_leds[_ledIdx].setOff();
@@ -576,15 +589,21 @@ public class DSRClient
         while(m_execBlink)
         {
             blinkLed.setOn();
-            try {
+            try
+            {
                 Thread.sleep(500);
-            } catch (InterruptedException ex) {
+            } 
+            catch (InterruptedException ex)
+            {
                 ex.printStackTrace();
             }
             blinkLed.setOff();
-            try {
+            try
+            {
                 Thread.sleep(500);
-            } catch (InterruptedException ex) {
+            } 
+            catch (InterruptedException ex)
+            {
                 ex.printStackTrace();
             }
         }
@@ -638,9 +657,12 @@ public class DSRClient
         while(true)
         {
             sendData("geilo", ADDRESS_START+"0000.6EF0");
-            try {
+            try
+            {
                 Thread.sleep(5000);
-            } catch (InterruptedException ex) {
+            } 
+            catch (InterruptedException ex)
+            {
                 ex.printStackTrace();
             }
         }
