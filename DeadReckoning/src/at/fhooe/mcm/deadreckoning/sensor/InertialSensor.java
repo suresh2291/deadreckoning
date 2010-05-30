@@ -31,7 +31,7 @@ public class InertialSensor {
     private static final float SLOWDOWN_THRESHOLD = 12.0f;
 
     /** @brief The number of samples used for zero threshold estimation. */
-    private static final int NO_CALIBRATION_SAMPLES = 1024;
+    private static final int NO_CALIBRATION_SAMPLES = 32;
 
     /** @brief The interface to access the Sun Spot's accelerometer. */
     private IAccelerometer3D m_accel;
@@ -144,6 +144,8 @@ public class InertialSensor {
             m_offsetZ /= (float)_noSamples;
             m_isCalibrated = true;
         }
+
+        m_calibrationCount++;
     }
 
     /**
@@ -155,10 +157,6 @@ public class InertialSensor {
      * @throws IOException
      */
     public void init() throws IOException {
-        if (!m_isCalibrated) {
-            calibrate(NO_CALIBRATION_SAMPLES);
-        }
-
         m_kalmanFilter.init(new float[]{m_xAccelSample - m_offsetX, m_yAccelSample - m_offsetY}, 2);
         m_lowpassFilter.init(new float[]{m_positionX[1], m_positionY[1]}, 2);
     }
@@ -173,12 +171,16 @@ public class InertialSensor {
      * @throws IOException
      */
     public void update(float _dt) throws IOException {
-        getSensorValues();
-        filterAcceleration(_dt);
-        integrate(_dt);
-        detectMovementEnd();
-        filterPosition(_dt);
-        calculateDistance();
+        if (!m_isCalibrated) {
+            calibrate(NO_CALIBRATION_SAMPLES);
+        } else {
+            getSensorValues();
+            filterAcceleration(_dt);
+            integrate(_dt);
+            detectMovementEnd();
+            filterPosition(_dt);
+            calculateDistance();
+        }
     }
 
     /**
