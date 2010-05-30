@@ -25,18 +25,16 @@ public class DeadReckoningAPI extends MIDlet {
      */
     private void run() throws IOException {
 
-
-        m_sensor.calibrate();
         m_sensor.init();
         m_distSync = new DistanceSync(m_sensor);
         int i = 0;
         for (;; i++) {
             m_sensor.update((float) m_clock.getDelta());
             if (i % 20 == 0) {
-                m_dsr.sendData("" + m_sensor.getDistance(), "0014.4F01.0000.6EF0");
-                System.out.println(m_distSync.getAverage(i));
+                //m_dsr.sendData("" + m_sensor.getDistance(), "0014.4F01.0000.6EF0");
+                //System.out.println(m_distSync.getAverage(i));
             }
-            Utils.sleep(50);
+            Utils.sleep(10);
             m_clock.tick();
         }
     }

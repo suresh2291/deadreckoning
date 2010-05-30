@@ -1,5 +1,7 @@
 package at.fhooe.mcm.deadreckoning.filter;
 
+import com.sun.spot.util.Debug;
+
 /**
  * @class KalmanFilter
  * @author Florian Lettner, Lukas Bischof, Peter Riedl
@@ -60,8 +62,9 @@ public class KalmanFilter implements IFilter {
      * @brief Updates the Kalman filter.
      *
      * @param _observedValue The value gained by measuring.
+     * @param _dtx Not used for this filter.
      */
-    public void update(float[] _observedValue) {
+    public void update(float[] _observedValue, float _dtx) {
 
         // if dimensions do not match throw an exception
         if (_observedValue.length != m_observed.length) {
@@ -84,6 +87,13 @@ public class KalmanFilter implements IFilter {
         for (int i = 0; i < m_correctedvar.length; i++) {
             m_correctedvar[i] = m_predictedvar[i] * (1.0f - m_kalman[i]);
         }
+
+        // System.out.println("Observed  X: " + _observedValue[0]);
+        // System.out.println("Observed  Y: " + _observedValue[1]);
+        // System.out.println("Predicted X: " + m_predicted[0]);
+        // System.out.println("Predicted Y: " + m_predicted[1]);
+        // System.out.println("Corrected X: " + m_corrected[0]);
+        // System.out.println("Corrected Y: " + m_corrected[1]);
 
         // predict next variances and values
         m_predictedvar = m_correctedvar;

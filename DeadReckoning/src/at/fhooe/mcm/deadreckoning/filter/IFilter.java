@@ -32,8 +32,9 @@ public interface IFilter {
      * generates new corrected values each time the method is called.
      *
      * @param _observedValue The observed value needed to update the prediction.
+     * @param _dtx The time difference since the last update.
      */
-    void update(float[] _observedValue);
+    void update(float[] _observedValue, float _dtx);
 
     /**
      * @brief Provides the caller with the currently filtered values.

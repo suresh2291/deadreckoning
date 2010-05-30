@@ -1,4 +1,3 @@
-
 package at.fhooe.mcm.dsr.packages;
 
 import at.fhooe.mcm.dsr.util.RouteRecord;
@@ -8,58 +7,57 @@ import at.fhooe.mcm.dsr.util.RouteRecord;
  * @author Florian Lettner, Lukas Bischof, Peter Riedl
  * @version 1.0
  *
- * @brief this class represents a data package used by DSR
+ * @brief This class represents a data package used by DSR.
  *
  * Container for a data package in DSR. It contains the route from initiator
- * to target and the actual data
+ * to target and the actual data.
  */
-public class DataPkg
-{
+public class DataPkg {
 
-    /**@brief the route from the initiator to the target of the data*/
+    /**@brief The route from the initiator to the target of the data. */
     private RouteRecord m_rec = new RouteRecord();
-    /**@brief the actual data*/
+
+    /**@brief The actual data. */
     private String m_data = "";
 
     /**
-     * instantiates a new data package with passed route and data
-     * @param _rr the route for the data
-     * @param _data the actual data
+     * @brief Instantiates a new data package with passed route and data.
+     *
+     * @param _rr The route for the data.
+     * @param _data The actual data.
      */
-    public DataPkg(RouteRecord _rr, String _data)
-    {
+    public DataPkg(RouteRecord _rr, String _data) {
         m_rec = _rr;
         m_data = _data;
     }
 
     /**
-     * instantiates a new data package from the passed string representation of
-     * the data package
-     * @param _pkg the string representation of the data package
+     * @brief Istantiates a new data package from the passed string representation of the data package.
+     *
+     * @param _pkg The string representation of the data package.
      */
-    public DataPkg(String _pkg)
-    {
+    public DataPkg(String _pkg) {
         parseDataPkg(_pkg);
     }
 
     /**
-     * @brief parses the string representation of a data package
-     * assures the passed string is a representation of a data package and
-     * extracts RouteRecord and data from the package
-     * @param _pkg the string representation of the data package
+     * @brief Parses the string representation of a data package.
+     *
+     * Assures that the passed string is a representation of a data package and
+     * extracts RouteRecord and data from the package.
+     *
+     * @param _pkg The string representation of the data package.
      */
-    private void parseDataPkg(String _pkg)
-    {
+    private void parseDataPkg(String _pkg) {
         int nextDividerIdx = 0;
         String buff = _pkg;
-        if (!buff.startsWith("[DATA]"))
-        {
+        if (!buff.startsWith("[DATA]")) {
             return;
         }
 
         int headerEndIdx = buff.indexOf("]");
         buff = buff.substring(headerEndIdx + 1);
-        
+
         nextDividerIdx = buff.indexOf(";");
         String route = buff.substring(0, nextDividerIdx);
 
@@ -71,13 +69,14 @@ public class DataPkg
     }
 
     /**
-     * @brief creates the string representation of a data package
-     * creates the string representation of a data package by adding the string
-     * "[DATA]", the RouteRecord of the data and the actual data to the result
-     * @return the string representation of the data package
+     * @brief Creates the string representation of a data package.
+     *
+     * Creates the string representation of a data package by adding the string
+     * "[DATA]", the RouteRecord of the data and the actual data to the result.
+     *
+     * @return The string representation of the data package.
      */
-    public String toString() 
-    {
+    public String toString() {
         StringBuffer b = new StringBuffer("[DATA]");
         b.append(getRouteRecord().toString());
         b.append(";");
@@ -86,38 +85,38 @@ public class DataPkg
     }
 
     /**
-     * provides the data from the package
-     * @return
+     * @brief Provides the data from the package.
+     *
+     * @return A string representation of the package data.
      */
-    public String getData()
-    {
+    public String getData() {
         return m_data;
     }
 
     /**
-     * sets the passed string as data for the package
-     * @param _data the string representing the data
+     * @brief Sets the passed string as data for the package.
+     *
+     * @param _data The string representing the data.
      */
-    public void setData(String _data)
-    {
+    public void setData(String _data) {
         this.m_data = _data;
     }
 
     /**
-     * provides the route to the data
-     * @return the route to the data
+     * @brief Provides the route to the data.
+     *
+     * @return The route to the data.
      */
-    public RouteRecord getRouteRecord()
-    {
+    public RouteRecord getRouteRecord() {
         return m_rec;
     }
 
     /**
-     * sets the passed RouteRecord as RouteRecord for the package
-     * @param _rec the RouteRecord of the data
+     * @brief Sets the passed RouteRecord as RouteRecord for the package.
+     *
+     * @param _rec The RouteRecord of the data.
      */
-    public void setRouteRecord(RouteRecord _rec)
-    {
+    public void setRouteRecord(RouteRecord _rec) {
         this.m_rec = _rec;
     }
 }

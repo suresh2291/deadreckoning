@@ -20,53 +20,79 @@ import java.io.IOException;
  * on gyroscopes. For accuracy multiple filtering strategies are used.
  */
 public class InertialSensor {
-    
+
+    /** @brief The earth gravity in m/s² is calculated by mass(earth)/radius(earth)². */
+    private static final float EARTH_ACCELERATION = 9.812865328f;
+
+    /** @brief The size of the discrimination window used to correct accelerations. */
     private static final float DISCRIMINATION_SIZE = 2.0f;
+
+    /** @brief A threshold to indicate movement ends. */
     private static final float SLOWDOWN_THRESHOLD = 12.0f;
 
-    
+    /** @brief The number of samples used for zero threshold estimation. */
+    private static final int NO_CALIBRATION_SAMPLES = 1024;
+
     /** @brief The interface to access the Sun Spot's accelerometer. */
     private IAccelerometer3D m_accel;
+
+    /** @brief A counter to indicate how many calibration samples have been taken. */
+    private int m_calibrationCount = 0;
+    
     /** @brief Storage for the current and the previous x-acceleration. */
-    float[] m_accelerationX;
+    private float[] m_accelerationX;
+    
     /** @brief Storage for the current and the previous y-acceleration. */
-    float[] m_accelerationY;
+    private float[] m_accelerationY;
+
     /** @brief Storage for the current and the previous x-velocity. */
-    float[] m_velocityX;
+    private float[] m_velocityX;
+
     /** @brief Storage for the current and the previous y-velocity. */
-    float[] m_velocityY;
+    private float[] m_velocityY;
+
     /** @brief Storage for the current and the previous x-position. */
-    float[] m_positionX;
+    private float[] m_positionX;
+
     /** @brief Storage for the current and the previous y-position. */
-    float[] m_positionY;
+    private float[] m_positionY;
+
     /** @brief Filter interface for a Kalman filter. */
-    IFilter m_kalmanFilter;
+    private IFilter m_kalmanFilter;
+
     /** @brief Filter interface for a Kalman based lowpass filter. */
-    IFilter m_lowpassFilter;
+    private IFilter m_lowpassFilter;
+
     /** @brief Last measured raw x-acceleration. */
-    float m_xAccelSample;
+    private float m_xAccelSample;
+
     /** @brief Last measured raw y-acceleration. */
-    float m_yAccelSample;
+    private float m_yAccelSample;
+
     /** @brief Last measured raw y-acceleration. */
-    float m_zAccelSample;
+    private float m_zAccelSample;
+
     /** @brief Counter to detect movement stops on the x-axis. */
-    float m_cntX;
+    private float m_cntX;
+
     /** @brief Counter to detect movement stops on the y-axis. */
-    float m_cntY;
+    private float m_cntY;
+
     /** @brief The overall m_distance in meters. */
-    float m_distance;
+    private float m_distance;
+
     /** @brief The sensor offset for the x-axis. */
-    float m_offsetX;
+    private float m_offsetX;
+
     /** @brief The sensor offset for the y-axis. */
-    float m_offsetY;
+    private float m_offsetY;
+
     /** @brief The sensor offset for the y-axis. */
-    float m_offsetZ;
+    private float m_offsetZ;
+
     /** @brief A flag to indicate if the the sensor is calibrated. */
-    boolean m_isCalibrated;
-
-     float[] m_posXdt;
-     float[] m_posYdt;
-
+    private boolean m_isCalibrated;
+    
     /**
      * @brief Creates a new instance of an <code>InertialSensor</code>
      */
@@ -77,8 +103,6 @@ public class InertialSensor {
         m_velocityY = new float[2];
         m_positionX = new float[2];
         m_positionY = new float[2];
-        m_posXdt = new float[2];
-        m_posYdt = new float[2];
 
         m_xAccelSample = 0;
         m_yAccelSample = 0;
@@ -107,33 +131,32 @@ public class InertialSensor {
      *
      * @throws IOException
      */
-    public void calibrate() throws IOException {
+    private void calibrate(int _noSamples) throws IOException {
 
-        for (int i = 0; i < 1024; i++) {
-            getSensorValues();
-            m_offsetX = m_offsetX + m_xAccelSample;
-            m_offsetY = m_offsetY + m_yAccelSample;
+        getSensorValues();
+        m_offsetX += m_xAccelSample;
+        m_offsetY += m_yAccelSample;
+        m_offsetZ += (m_zAccelSample - EARTH_ACCELERATION);
+
+        if(m_calibrationCount == _noSamples) {
+            m_offsetX /= (float)_noSamples;
+            m_offsetY /= (float)_noSamples;
+            m_offsetZ /= (float)_noSamples;
+            m_isCalibrated = true;
         }
-
-        m_offsetY /= 1024;
-        m_offsetZ /= 1024;
-
-        m_offsetZ = m_zAccelSample - 9.81f;
-
-        m_isCalibrated = true;
     }
 
     /**
      * @brief Initializes the sensor.
      *
      * This method initializes the used filters and sets the filters dimensions. For
-     * accurate initial values the sensor has to be calibrated first.
+     * accurate initial values the sensor has to be calibrated first. Calibration
      *
      * @throws IOException
      */
     public void init() throws IOException {
         if (!m_isCalibrated) {
-            calibrate();
+            calibrate(NO_CALIBRATION_SAMPLES);
         }
 
         m_kalmanFilter.init(new float[]{m_xAccelSample - m_offsetX, m_yAccelSample - m_offsetY}, 2);
@@ -151,10 +174,10 @@ public class InertialSensor {
      */
     public void update(float _dt) throws IOException {
         getSensorValues();
-        filterAcceleration();
+        filterAcceleration(_dt);
         integrate(_dt);
         detectMovementEnd();
-        filterPosition();
+        filterPosition(_dt);
         calculateDistance();
     }
 
@@ -175,21 +198,9 @@ public class InertialSensor {
      * two frames.
      */
     private void calculateDistance() {
-        m_posXdt[1] = m_positionX[1] - m_positionX[0];
-        m_posYdt[1] = m_positionY[1] - m_positionY[0];
-
-        if(m_posXdt[1] > 1.5)
-            m_posXdt[1] = (float)(m_posXdt[1] - ((int)m_posXdt[1]) + 1.0f);
-
-        if(m_posYdt[1] > 1.5)
-            m_posYdt[1] = (float)(m_posYdt[1] - ((int)m_posYdt[1]) + 1.0f);
-
-        float posXdt = (m_posXdt[1] + m_posXdt[0]) / 2.0f;
-        float posYdt = (m_posYdt[1] + m_posYdt[0]) / 2.0f;
-
-        m_posXdt[0] = m_posXdt[1];
-        m_posYdt[0] = m_posYdt[1];
-
+       
+        float posXdt = m_positionX[1] - m_positionX[0];
+        float posYdt = m_positionY[1] - m_positionY[0];
 
         m_distance += Math.sqrt(posXdt * posXdt + posYdt * posYdt);
         //System.out.println("Distance: " + m_distance);
@@ -217,38 +228,41 @@ public class InertialSensor {
      */
     private void integrate(float _dt) {
 
-        float gravityOffset = m_zAccelSample / 9.81f;
+        float gravityOffset = (m_zAccelSample - m_offsetZ) / EARTH_ACCELERATION;
 
         // correct earth gravity
-        if(gravityOffset < 1f) {
+        if(gravityOffset < 1.0f) {
            if(m_accelerationX[1] > m_accelerationY[1])
-               m_accelerationX[1] *= (1f - gravityOffset);
+               m_accelerationX[1] *= (1.0f - gravityOffset);
             else
-                m_accelerationY[1] *= (1f - gravityOffset);
+               m_accelerationY[1] *= (1.0f - gravityOffset);
         }
 
         // calculate new velocity
-        m_velocityX[1] = m_velocityX[0] + ((m_accelerationX[0] + m_accelerationX[1]) / 2f) * _dt;
-        m_velocityY[1] = m_velocityY[0] + ((m_accelerationX[0] + m_accelerationY[1]) / 2f) * _dt;
+        m_velocityX[1] = m_velocityX[0] + m_accelerationX[1] * _dt;
+        m_velocityY[1] = m_velocityY[0] + m_accelerationY[1] * _dt;
 
         // calculate new position
-        m_positionX[1] = m_positionX[0] + ((m_velocityX[0] + m_velocityX[1]) / 2f) * _dt;
-        m_positionY[1] = m_positionY[0] + ((m_velocityY[0] + m_velocityY[1]) / 2f) * _dt;
+        m_positionX[1] = m_positionX[0] + m_velocityX[1] * _dt;
+        m_positionY[1] = m_positionY[0] + m_velocityY[1] * _dt;
 
         // store current values as previous values for next integral step
         m_accelerationX[0] = m_accelerationX[1];
         m_accelerationY[0] = m_accelerationY[1];
         m_velocityX[0] = m_velocityX[1];
         m_velocityY[0] = m_velocityY[1];
+
     }
 
     /**
      * @brief Filters the position using a lowpass filter.
      *
      * This method updates the lowpass filter and corrects the calculated positions.
+     *
+     * @param _dtx The time passed in seconds since the last update.
      */
-    private void filterPosition() {
-        m_lowpassFilter.update(new float[]{m_positionX[1], m_positionY[1]});
+    private void filterPosition(float _dtx) {
+        m_lowpassFilter.update(new float[]{m_positionX[1], m_positionY[1]}, _dtx);
 
         float[] tempPos = m_lowpassFilter.getCorrectedValues();
 
@@ -264,9 +278,12 @@ public class InertialSensor {
      * zero acceleration offset. Additionally, a discrimination window is
      * applied which helps to prevent error accumulation due to the earth's
      * gravity.
+     *
+     * @param _dtx The time passed in seconds since the last update.
      */
-    private void filterAcceleration() {
-        m_kalmanFilter.update(new float[]{m_xAccelSample - m_offsetX, m_yAccelSample - m_offsetY});
+    private void filterAcceleration(float _dtx) {
+
+        m_kalmanFilter.update(new float[]{m_xAccelSample - m_offsetX, m_yAccelSample - m_offsetY}, _dtx);
 
         float[] temp = m_kalmanFilter.getCorrectedValues();
 
@@ -321,13 +338,20 @@ public class InertialSensor {
     /**
      * @brief Gets the sensor values from the sensor.
      *
-     * Sensor values are provided in G. 1 G ~ 9.81m/s
+     * Sensor values are provided in G. 1 G ~ 9.81m/s². These sensor values
+     * are converted in m/s². However, it would also be possible to describe
+     * the earth's acceleration in newton per kilogram. The numeric value stays
+     * the same. This alternative representation can be understood by noting that
+     * the gravitational force acting on an object at the Earth's surface is
+     * proportional to the mass of the object: for each kilogram of mass, the
+     * Earth exerts a nominal force of ~ 9.81 newtons. Though, the precise value
+     * varies depending on the location of measurement.
      *
      * @throws IOException
      */
     private void getSensorValues() throws IOException {
-        m_xAccelSample = (float) m_accel.getAccelX() * 9.81f;
-        m_yAccelSample = (float) m_accel.getAccelY() * 9.81f;
-        m_zAccelSample = (float) m_accel.getAccelZ() * 9.81f;
+        m_xAccelSample = (float) m_accel.getAccelX() * EARTH_ACCELERATION;
+        m_yAccelSample = (float) m_accel.getAccelY() * EARTH_ACCELERATION;
+        m_zAccelSample = (float) m_accel.getAccelZ() * EARTH_ACCELERATION;
     }
 }

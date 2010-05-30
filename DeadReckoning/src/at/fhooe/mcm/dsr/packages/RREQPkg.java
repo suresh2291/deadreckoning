@@ -8,28 +8,30 @@ import at.fhooe.mcm.dsr.util.RouteRecord;
  * @author Florian Lettner, Lukas Bischof, Peter Riedl
  * @version 1.0
  *
- * @brief this class represents a RREQ package used by DSR
+ * @brief This class represents a RREQ package used by DSR.
  *
  * Container for a RREQ package in DSR. It contains the initiator, the target, a
- * RouteRecord and an id
+ * RouteRecord and an id.
  *
  */
-public class RREQPkg
-{
-    /**@brief the initiator of the RREQ*/
+public class RREQPkg {
+
+    /**@brief The initiator of the RREQ. */
     private String m_initiator = "";
-    /**@brief the target of the RREQ*/
+
+    /**@brief The target of the RREQ. */
     private String m_target = "";
-    /**@brief the route record of the RREQ*/
+
+    /**@brief The route record of the RREQ. */
     private RouteRecord m_route = null;
-    /**@brief the ID of the RREQ*/
+
+    /**@brief The ID of the RREQ. */
     private int m_id = -1;
 
     /**
-     * instantiates an empty RREQ package
+     * @brief Instantiates an empty RREQ package.
      */
-    public RREQPkg()
-    {
+    public RREQPkg() {
         setID(0);
         setInitiator("");
         setRouteRecord(new RouteRecord());
@@ -37,15 +39,14 @@ public class RREQPkg
     }
 
     /**
-     * instantiates a new RREQ package with passed initiator, target, route record
-     * and ID
-     * @param _initiator the initiator of the RREQ
-     * @param _target the target of the RREQ
-     * @param _rr the route record of the RREQ
-     * @param _id the ID of the RREQ
+     * @brief Instantiates a new RREQ package with passed initiator, target, route record and ID.
+     *
+     * @param _initiator The initiator of the RREQ.
+     * @param _target The target of the RREQ.
+     * @param _rr The route record of the RREQ.
+     * @param _id The ID of the RREQ.
      */
-    public RREQPkg(String _initiator, String _target, RouteRecord _rr, int _id)
-    {
+    public RREQPkg(String _initiator, String _target, RouteRecord _rr, int _id) {
         m_initiator = _initiator;
         m_target = _target;
         m_route = _rr;
@@ -53,21 +54,20 @@ public class RREQPkg
     }
 
     /**
-     * instantiates a new RREQ package from the passed string representation of
-     * a RREQ package
-     * @param _pkg
+     * @brief Instantiates a new RREQ package from the passed string representation of a RREQ package.
+     *
+     * @param _pkg The package to be parsed.
      */
-    public RREQPkg(String _pkg)
-    {
+    public RREQPkg(String _pkg) {
         parseRREQPkg(_pkg);
     }
 
     /**
-     * copy constructor of a RREQ package
-     * @param _pkg the RREQ package to copy
+     * @brief Copy constructor of a RREQ package.
+     *
+     * @param _pkg The RREQ package to copy.
      */
-    public RREQPkg(RREQPkg _pkg)
-    {
+    public RREQPkg(RREQPkg _pkg) {
         setInitiator(_pkg.getInitiator());
         setTargetAddress(_pkg.getTargetAddress());
         setRouteRecord(_pkg.getRouteRecord());
@@ -75,12 +75,12 @@ public class RREQPkg
     }
 
     /**
-     * copy constructor of a RREQ package with altered RouteRecord
-     * @param _pkg the RREQ package to copy
-     * @param _rr the new RouteRecord
+     * @brief Copy constructor of a RREQ package with altered RouteRecord.
+     *
+     * @param _pkg The RREQ package to copy.
+     * @param _rr The new RouteRecord.
      */
-    public RREQPkg(RREQPkg _pkg, RouteRecord _rr)
-    {
+    public RREQPkg(RREQPkg _pkg, RouteRecord _rr) {
         setInitiator(_pkg.getInitiator());
         setTargetAddress(_pkg.getTargetAddress());
         setRouteRecord(_rr);
@@ -88,92 +88,92 @@ public class RREQPkg
     }
 
     /**
-     * provides the ID of the package
-     * @return the ID of the package
+     * @brief Provides the ID of the package.
+     *
+     * @return The ID of the package.
      */
-    public int getID()
-    {
+    public int getID() {
         return m_id;
     }
 
     /**
-     * sets the passed integer as ID for the package
-     * @param _id the integer representing the ID
+     * @brief Sets the passed integer as ID for the package.
+     *
+     * @param _id The integer representing the ID.
      */
-    public void setID(int _id)
-    {
+    public void setID(int _id) {
         this.m_id = _id;
     }
 
     /**
-     * provides the initiator of the package
-     * @return the address of the initiator of the package
+     * @brief Provides the initiator of the package.
+     *
+     * @return The address of the initiator of the package.
      */
-    public String getInitiator()
-    {
+    public String getInitiator() {
         return m_initiator;
     }
 
     /**
-     * sets the passed string as initiator of the package
-     * @param _initiator the address of the initiator
+     * @brief Sets the passed string as initiator of the package.
+     *
+     * @param _initiator The address of the initiator.
      */
-    public void setInitiator(String _initiator)
-    {
+    public void setInitiator(String _initiator) {
         this.m_initiator = _initiator;
     }
 
     /**
-     * provides the RouteRecord of the RREQ package
-     * @return the RouteRecord of the RREQ package
+     * @brief Provides The RouteRecord of the RREQ package.
+     *
+     * @return The RouteRecord of the RREQ package.
      */
-    public RouteRecord getRouteRecord()
-    {
+    public RouteRecord getRouteRecord() {
         return m_route;
     }
 
     /**
-     * sets the passed RouteRecord as the RouteRecord of the RREQ
-     * @param _route the RouteRecord of the RREQ
+     * @brief Sets the passed RouteRecord as the RouteRecord of the RREQ.
+     *
+     * @param _route The RouteRecord of the RREQ.
      */
-    public void setRouteRecord(RouteRecord _route)
-    {
+    public void setRouteRecord(RouteRecord _route) {
         this.m_route = _route;
     }
 
     /**
-     * provides the target address of the RREQ package
-     * @return the target address of the RREQ package
+     * @brief Provides the target address of the RREQ package.
+     *
+     * @return The target address of the RREQ package.
      */
-    public String getTargetAddress()
-    {
+    public String getTargetAddress() {
         return m_target;
     }
 
     /**
-     * sets the target address of a RREQ package
-     * @param _target the target address of a RREQ package
+     * @brief Sets the target address of a RREQ package.
+     *
+     * @param _target The target address of a RREQ package.
      */
-    public void setTargetAddress(String _target)
-    {
+    public void setTargetAddress(String _target) {
         this.m_target = _target;
     }
 
     /**
-     * provides the IITupel of a RREQ package
-     * @return the IITupel of the RREQ package
+     * @brief Provides the IITupel of a RREQ package.
+     *
+     * @return The IITupel of the RREQ package.
      */
-    public IITupel getIITupel()
-    {
+    public IITupel getIITupel() {
         return new IITupel(getInitiator(), getID());
     }
 
     /**
-     * provides a string representation of the RREQ package
-     * @return the string representation of the RREQ package
+     * @brief Provides a string representation of the RREQ package.
+     *
+     * @return The string representation of the RREQ package.
      */
-    public String toString()
-    {
+    public String toString() {
         StringBuffer b = new StringBuffer("[RREQ]");
         b.append(m_initiator);
         b.append(";");
@@ -186,17 +186,17 @@ public class RREQPkg
     }
 
     /**
-     * @brief parses the string representation of a RREQ package
-     * assures the passed string is a representation of a RREQ package and
-     * extracts the initiator, the target, the RouteRecord and the ID from the package
-     * @param _pkg the string representation of the RREQ package
+     * @brief Parses the string representation of a RREQ package.
+     *
+     * Assures that the passed string is a representation of a RREQ package and
+     * extracts the initiator, the target, the RouteRecord and the ID from the package.
+     *
+     * @param _pkg The string representation of the RREQ package.
      */
-    private void parseRREQPkg(String _pkg)
-    {
+    private void parseRREQPkg(String _pkg) {
         int nextDividerIdx = 0;
         String buff = _pkg;
-        if (!buff.startsWith("[RREQ]"))
-        {
+        if (!buff.startsWith("[RREQ]")) {
             return;
         }
 

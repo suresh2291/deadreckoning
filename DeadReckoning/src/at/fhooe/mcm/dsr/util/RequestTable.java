@@ -7,36 +7,33 @@ import java.util.Vector;
  * @author Florian Lettner, Lukas Bischof, Peter Riedl
  * @version 1.0
  *
- * @brief this class represents an RequestTable for storage of IITupels
+ * @brief This class represents an RequestTable for storage of IITupels.
  *
- * Container for IItupels of several RREQs
- *
+ * Container for IItupels of several RREQs.
  */
-public class RequestTable
-{
+public class RequestTable {
 
-    /**@brief a vector storing the IITupels of several RREQs*/
+    /**@brief A vector storing the IITupels of several RREQs. */
     private Vector m_requests = new Vector();
 
     /**
-     * adds the passed IITupel to the vector of IITupels
-     * @param _tupel the IITupel to add
+     * @brief Adds the passed IITupel to the vector of IITupels.
+     *
+     * @param _tupel The IITupel to add.
      */
-    public void addTupel(IITupel _tupel)
-    {
+    public void addTupel(IITupel _tupel) {
         m_requests.addElement(_tupel);
     }
 
     /**
-     * checks whether one of the stored IITupels is equal to the passed IITupel
-     * @param _tupel the IITupel to check for
+     * @brief Checks whether one of the stored IITupels is equal to the passed IITupel.
+     *
+     * @param _tupel The IITupel to check for.
      * @return <code>true</code> if one of the stored IITupels is equal to the
-     * passed IITupel, <code>false</code> otherwise
+     * passed IITupel, <code>false</code> otherwise.
      */
-    public boolean contains(IITupel _tupel)
-    {
-        for (int i = 0; i < m_requests.size(); i++)
-        {
+    public boolean contains(IITupel _tupel) {
+        for (int i = 0; i < m_requests.size(); i++) {
             if (((IITupel) m_requests.elementAt(i)).equals(_tupel)) {
                 return true;
             }
@@ -45,11 +42,11 @@ public class RequestTable
     }
 
     /**
-     * removes the passed IITupel from the stored IITupels
-     * @param _tupel the IITupel to be removed
+     * @brief Removes the passed IITupel from the stored IITupels.
+     *
+     * @param _tupel The IITupel to be removed.
      */
-    public void remove(IITupel _tupel)
-    {
+    public void remove(IITupel _tupel) {
         m_requests.removeElement(_tupel);
     }
 }
