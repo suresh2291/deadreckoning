@@ -10,7 +10,7 @@ import org.sunspotworld.demo.gui.DeadReckoningInfoGUI;
 
 
 /**
- * Sample Sun SPOT host application
+ * DSR client gui
  */
 public class SunSpotHostApplication {
 static DeadReckoningInfoGUI g = new DeadReckoningInfoGUI();
