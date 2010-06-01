@@ -82,7 +82,7 @@
             <compilation-unit>
                 <package-root>src</package-root>
                 <classpath mode="boot">${sunspot.bootclasspath}</classpath>
-                <classpath mode="compile">${sunspot.classpath}</classpath>
+                <classpath mode="compile">lib/multihop_common.jar;lib/spotlib_common.jar;lib/spotlib_device.jar;lib/transducer_device.jar</classpath>
                 <built-to>build</built-to>
                 <source-level>1.4</source-level>
             </compilation-unit>
