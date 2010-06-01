@@ -6,7 +6,7 @@
  Please have a look at my blog for further details: http://ltty.wordpress.com
     
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- Copyright (c) 2010 Florian Lettner
+ Copyright (c) 2010 Florian Lettner, Lukas Bischof, Peter Riedl
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
