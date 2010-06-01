@@ -1,31 +1,57 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package at.fhooe.mcm.deadreckoning.host.dsr;
 
 /**
+ * @class RREPPkg
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @version 1.0
  *
- * @author Peter
+ * @brief this class represents a RREP package used by DSR.
+ *
+ * Container for a RREP package in DSR. It contains the route from initiator
+ * to target.
  */
 public class RREPPkg {
 
-    private RouteRecord m_rec = new RouteRecord("A,B,C,D");
+    /** @brief The route record containing the route from the initiator to the target of the data. */
+    private RouteRecord m_rec = new RouteRecord();
 
+    /**
+     * @brief Initiates a new RREP package with the passed RouteRecord.
+     *
+     * @param _rr The route to be set.
+     */
     public RREPPkg(RouteRecord _rr) {
         m_rec = _rr;
     }
 
+    /**
+     * @brief Instantiates a new RREP package from the passed string representation of the RREP package.
+     *
+     * @param _pkg The string representation of a RREP package.
+     */
     public RREPPkg(String _pkg) {
         parseRREP(_pkg);
     }
 
+    /**
+     * @brief Creates a string representation of a RREP package.
+     *
+     * @return The string representation of a RREP package.
+     */
     public String toString() {
         StringBuffer b = new StringBuffer("[RREP]");
         b.append(m_rec.toString());
         return b.toString();
     }
 
+    /**
+     * @brief Parses the string representation of a RREP package.
+     *
+     * Assures that the passed string is a representation of a RREP package and
+     * extracts the RouteRecord from the package.
+     *
+     * @param _pkg The string representation of the RREP package.
+     */
     private void parseRREP(String _pkg) {
         String buff = _pkg;
         if (!buff.startsWith("[RREP]")) {
@@ -36,11 +62,21 @@ public class RREPPkg {
         setRouteRecord(new RouteRecord(buff));
     }
 
-    public void setRouteRecord(RouteRecord _rec) {
-        this.m_rec = _rec;
-    }
-
+    /**
+     * @brief Provides the route from initiator to target.
+     *
+     * @return the route from initiator to target.
+     */
     public RouteRecord getRouteRecord() {
         return m_rec;
+    }
+
+    /**
+     * @brief Sets the passed RouteRecord as RouteRecord for the package.
+     *
+     * @param _rec the RouteRecord to be set.
+     */
+    public void setRouteRecord(RouteRecord _rec) {
+        this.m_rec = _rec;
     }
 }

@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-/*test*/
 package at.fhooe.mcm.deadreckoning.host.dsr;
 
 import at.fhooe.mcm.deadreckoning.host.gui.DeadReckoningInfoGUI;
@@ -10,35 +5,97 @@ import com.sun.spot.io.j2me.radiogram.Radiogram;
 import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
 import com.sun.spot.peripheral.NoRouteException;
 import com.sun.spot.peripheral.radio.RadioFactory;
-
 import com.sun.spot.util.IEEEAddress;
 import java.io.IOException;
 import java.util.Vector;
 import javax.microedition.io.Connector;
 
 /**
+ * @class DSRClient
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @version 1.0
  *
- * @author Peter
+ * @brief The class with all the logic required for Dynamic Source Routing.
+ * 
+ * The only public funtion "sendData" is used to send data to any host in the
+ * network. In order to perform dynamic soure routing, the client listens to any
+ * connections on port 66 all the time. The received packets are inspected and
+ * treated according to their type ([RREQ], [RREP] and [DATA].
  */
 public class DSRClient {
 
-    private static final int DISCOVERY_TIMEOUT = 10000;
+    /** @brief the first 8 digits of all sunSPOTS could be used for reduction of packet overhead. */
     private static final String ADDRESS_START = "0014.4F01.";
+
+    /** @brief Base address of all connections indicating a radiogram connection. */
+    private static final String BASE_ADDRESS = "radiogram://";
+
+    /** @brief The timeout after which the routing table is discarded and rebuilt. */
+    private static final int DISCOVERY_TIMEOUT = 10000;
+
+    /** @brief The timeout after which the data are sent after a route request had to be performed. */
     private static final int ROUTE_REQUEST_TIMEOUT = 500;
+    
+    /** @brief The time the according LED is set on when something is indicated */
     private static final int BLINK_TIME = 500;
-    private int m_lastRRQID = 0;
+
+    /**@brief The index of the LED indicating sending data. */
+    private static final int SEND_DATA_LED = 0;
+
+    /**@brief The index of the LED indicating creating an RREQ.*/
+    private static final int CREATE_RREQ_LED = 1;
+
+    /**@brief The index of the LED indicating forwarding an RREQ.*/
+    private static final int FORWARD_RREQ_LED = 2;
+
+    /**@brief The index of the LED indicating forwarding an RREP.*/
+    private static final int FORWARD_RREP_LED = 3;
+
+    /** @brief The index of the LED indicating receiving an RREP. */
+    private static final int RECEIVE_RREP_LED = 4;
+
+    /** @brief The index of the LED indicating forwarding DATA. */
+    private static final int FORWARD_DATA_LED = 5;
+
+    /** @brief The index of the LED indicating receiving DATA. */
+    private static final int RECEIVE_DATA_LED = 6;
+
+    /**@brief The port of all connections. */
+    private static final int CONNECTION_PORT = 66;
+
+    /**@brief A vector of strings containing the addresses of the surrounding sunSPOTS. */
     private Vector m_clientsInRange = new Vector();
+    
+    /**@brief Here all received routing requests are stored @see RequestTable. */
     private RequestTable m_reqTable = new RequestTable();
+
+    /**@brief Here all discovered routes are stored @see RouteTable. */
     private RouteTable m_routeTable = new RouteTable();
-    private String m_baseAddr = "radiogram://";
-    private int m_port = 66;
-    private String m_recvAddr = m_baseAddr + ":" + m_port;
-    private String m_broadcastAddr = m_baseAddr + "broadcast:" + m_port;
+    
+    /** @brief The ID of the last generated [RREQ] package. */
+    private int m_lastRRQID = 0;
+
+    /**@brief The address for receiving data. */
+    private String m_recvAddr = BASE_ADDRESS + ":" + CONNECTION_PORT;
+
+    /**@brief Color for broadcasting data. */
+    private String m_broadcastAddr = BASE_ADDRESS + "broadcast:" + CONNECTION_PORT;
+
+    /**@brief Receiving is stopped when this variable is set to <code>false</code>. */
     private boolean m_execRCVLoop = true;
+    
+    /**@brief Node discovery is stopped when this variable is set to <code>false</code>. */
     private boolean m_execNodeDiscovery = true;
+
+    /**@brief Blinking is stopped when this variable is set to <code>false</code>. */
     private boolean m_execBlink = true;
+
+    /** @brief GUI for displaying the sensor data*/
     private DeadReckoningInfoGUI m_gui = null;
 
+    /**
+     * @brief Starts all neccessary threads for the DSR client.
+     */
     public DSRClient(DeadReckoningInfoGUI _gui) {
         m_gui = _gui;
         new Thread() {
@@ -60,21 +117,18 @@ public class DSRClient {
                 //discoverNodesInRange();
             }
         }.start();
-        //TestThread
-        new Thread() {
-
-            public void run() {
-                //testSendData();
-                /*while(true!=false)
-                {
-                performRREQ(ADDRESS_START+"0000.6B75");
-                }*/
-            }
-        }.start();
     }
 
+    /**
+     * @brief Sends data to de specified target.
+     *
+     * If neccessary the route to the target address is discovered and afterwards
+     * the data are sent over the route.
+     *
+     * @param _data The data to be sent.
+     * @param _addr The address of the target.
+     */
     public synchronized void sendData(final String _data, final String _addr) {
-
         new Thread() {
 
             public void run() {
@@ -98,10 +152,11 @@ public class DSRClient {
                 }
             }
         }.start();
-
-
     }
 
+    /**
+     * @brief Discovers all nodes in range by sending a ping.
+     */
     private void discoverNodesInRange() {
         while (m_execNodeDiscovery) {
             System.out.println("discovering spots in range...");
@@ -115,6 +170,13 @@ public class DSRClient {
         }
     }
 
+    /**
+     * @brief Listens for incomming connections.
+     *
+     * Here a radiogram connection to the receive address is established
+     * afterwards whenever a package is received the received content is passed
+     * to the processReceivedMessage method for further computation.
+     */
     private void rcvLoop() {
         RadiogramConnection rxConn = null;
         try {
@@ -139,6 +201,12 @@ public class DSRClient {
         }
     }
 
+    /**
+     * @brief Decides wether the message contained in the passed radiogram was a ping,
+     * acknowledge, RREQ, RREP or DATA package and initiates according actions.
+     *
+     * @param _rrg The radiogram containing the message to parse.
+     */
     private void processReceivedMessage(Radiogram _rrg) {
         String msg = "";
         try {
@@ -147,7 +215,7 @@ public class DSRClient {
             ex.printStackTrace();
         }
         if (msg.equals("ping")) {
-            sendPingACK(m_baseAddr + _rrg.getAddress() + ":" + m_port);
+            sendPingACK(BASE_ADDRESS + _rrg.getAddress() + ":" + CONNECTION_PORT);
         } else if (msg.equals("ack")) {
             addClientInRange(_rrg.getAddress());
         } else if (msg.startsWith("[RREQ]")) {
@@ -166,16 +234,10 @@ public class DSRClient {
             } else {
                 System.out.println("forwarding RREQ");
                 m_reqTable.addTupel(tupel);
-                /*RouteRecord r = pkg.getRouteRecord();
-                r.addNodeAddr(getOwnAddress());
-                sendBroadcast(new RREQPkg(pkg, r).toString());*/
                 forwardRREQ(pkg);
             }
-            //m_reqTable.addTupel(tupel);
             System.out.println("added tupel to list");
-            //System.out.println(msg);
         } else if (msg.startsWith("[RREP]")) {
-            //System.out.println("RREP discovered");
             RREPPkg pkg = new RREPPkg(msg);
             if (pkg.getRouteRecord().getInitiator().equals(getOwnAddress())) {
                 m_routeTable.addRoute(pkg.getRouteRecord().getTarget(), pkg.getRouteRecord());
@@ -197,48 +259,69 @@ public class DSRClient {
         }
     }
 
+    /**
+     * @brief Appends the own address to a newly creater RREP package and sends it over
+     * the reversed route to the initiator of the RREQ.
+     *
+     * @param _rr The RouteRecord contained in the RREQ.
+     */
     private void sendRREPTarget(RouteRecord _rr) {
         System.out.println("sending RREP target");
         _rr.addNodeAddr(getOwnAddress());
         RouteRecord r = new RouteRecord(_rr.toString());
 
-        //r = r.reverse();
         sendDataOverRoute(new RREPPkg(_rr).toString(), r.reverse());
-
     }
 
+    /**
+     * @brief Appends the route to the intended target of a RREQ and transmits it to
+     * the initiator of the RREQ.
+     *
+     * @param _rr The RouteRecord contained in the RREQ.
+     * @param _target The target of the RREQ.
+     */
     private void sendRREPRouteToTarget(RouteRecord _rr, String _target) {
         System.out.println("sending RREP route to target");
         RouteRecord r = _rr.concat(m_routeTable.getRouteToTarget(_target));
         _rr.addNodeAddr(getOwnAddress());
         sendDataOverRoute(new RREPPkg(r).toString(), _rr.reverse());
-
     }
 
-    private void testSendData() {
-        while (true) {
-            sendData("geilo", ADDRESS_START + "0000.6EF0");
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
-
+    /**
+     * @brief Extracts the next hop from the passed RouteRecord.
+     *
+     * The RouteRecord is sent the provided address.
+     *
+     * @param _data The data to be sent.
+     * @param _rr The RouteRecord containing the next hop.
+     */
     private void sendDataOverRoute(String _data, RouteRecord _rr) {
         String addr = _rr.getNextHop(getOwnAddress());
-        sendDataToTarget(_data, m_baseAddr + addr + ":" + m_port);
+        sendDataToTarget(_data, BASE_ADDRESS + addr + ":" + CONNECTION_PORT);
     }
 
+    /**
+     * @brief Acknowledges a ping.
+     * @param _addr The address of the sender of the ping.
+     */
     private void sendPingACK(String _addr) {
         sendDataToTarget("ack", _addr);
     }
 
+    /**
+     * @brief Sends a ping over the broadcast address.
+     */
     private void broadcastPing() {
         sendBroadcast("ping");
     }
 
+    /**
+     * @brief Creates a new RREQ package.
+     *
+     * The spot's own address is used as initiator and for the
+     * moment the only entry in the RouteRecord.
+     * @param _target the intended target of the RREQ.
+     */
     private void performRREQ(String _target) {
         RouteRecord r = new RouteRecord();
         r.addNodeAddr(getOwnAddress());
@@ -246,25 +329,49 @@ public class DSRClient {
         sendBroadcast(new RREQPkg(getOwnAddress(), _target, r, m_lastRRQID).toString());
     }
 
+    /**
+     * @brief Forwards a received RREQ.
+     * 
+     * @param _pkg The package to forward.
+     */
     private void forwardRREQ(RREQPkg _pkg) {
         _pkg.getRouteRecord().addNodeAddr(getOwnAddress());
         sendBroadcast(_pkg.toString());
     }
 
+    /**
+     * @brief Forwards received DATA.
+     *
+     * @param _pkg The data to forward.
+     */
     private void forwardData(DataPkg _pkg) {
         sendDataOverRoute(_pkg.toString(), _pkg.getRouteRecord());
-        // String addr = _pkg.getRouteRecord().getNextHop(getOwnAddress());
-        //sendDataThreaded(_pkg.toString(), addr);
     }
 
+    /**
+     * @brief Forwards a reveived RREP.
+     *
+     * @param _pkg The package to forward.
+     */
     private void forwardRREP(RREPPkg _pkg) {
         sendDataOverRoute(_pkg.toString(), _pkg.getRouteRecord().reverse());
     }
 
-    public void sendBroadcast(String _msg) {
+    /**
+     * @brief Sends data over the broadcast address.
+     *
+     * @param _msg The data to send.
+     */
+    private void sendBroadcast(String _msg) {
         sendDataToTarget(_msg, m_broadcastAddr);
     }
 
+    /**
+     * @brief Establishes a connection to the passed address and sends the data over it.
+     *
+     * @param _msg The message to be sent.
+     * @param _addr The address to send to.
+     */
     private synchronized void sendDataToTarget(final String _msg, final String _addr) {
 
         // new Thread()
@@ -276,14 +383,10 @@ public class DSRClient {
                     txConn = (RadiogramConnection) Connector.open(_addr);
                     txConn.setMaxBroadcastHops(1);
 
-
                     Radiogram tdg = (Radiogram) txConn.newDatagram(txConn.getMaximumLength());
                     tdg.reset();
                     tdg.writeUTF(_msg);
                     txConn.send(tdg);
-                    //m_sendBuffer = "";
-
-                    //m_blinkCols[ACK_LED] = LEDColor.GREEN;
                 } catch (NoRouteException _nae) {
                     m_routeTable.clear();
                     System.out.println("routing table was cleared after no ack");
@@ -291,13 +394,9 @@ public class DSRClient {
                     System.out.println("send exception (IO):" + _ioe.getMessage());
 
                     _ioe.printStackTrace();
-                    //m_blinkCols[ACK_LED] = LEDColor.RED;
                 } catch (Exception _e) {
                     System.out.println("send exception:" + _e.getMessage());
                 } finally {
-                    //m_sendInProgress = false;
-                    //m_blinkLEDIdx = ACK_LED;
-                    //blink();
                     try {
                         if (txConn != null) {
                             txConn.close();
@@ -306,28 +405,17 @@ public class DSRClient {
                         ex.printStackTrace();
                     }
                 }
-
             }
         }//.start();
     }
 
-    /* public void blink()
-    {
-    new Thread()
-    {
-    public void run()
-    {
-    m_leds[m_blinkLEDIdx].setColor(m_blinkCols[m_blinkLEDIdx]);
-    m_leds[m_blinkLEDIdx].setOn();
-    try {
-    Thread.sleep(m_blinkSleep);
-    } catch (InterruptedException ex) {
-    ex.printStackTrace();
-    }
-    m_leds[m_blinkLEDIdx].setOff();
-    }
-    }.start();
-    }*/
+  
+
+    /**
+     * @brief Adds the passed address to the list of clients in range.
+     *
+     * @param _addr the address to be added.
+     */
     private void addClientInRange(String _addr) {
         if (m_clientsInRange.contains(_addr)) {
             System.out.println(_addr + " already in list");
@@ -337,15 +425,38 @@ public class DSRClient {
         }
     }
 
+    /**
+     * @brief Retrieves the address of the sunSpot and returns it.
+     * 
+     * return The string representation of the own address.
+     */
     private String getOwnAddress() {
         String addr = IEEEAddress.toDottedHex(RadioFactory.getRadioPolicyManager().
                 getIEEEAddress());
         return addr;
     }
 
+    /**
+     * @brief Stops all running threads.
+     */
     public void stop() {
         m_execRCVLoop = false;
         m_execNodeDiscovery = false;
         m_execBlink = false;
+    }
+
+    /**
+     * @deprecated
+     * @brief Used for testing purposes only.
+     */
+    private void testSendData() {
+        while (true) {
+            sendData("geilo", ADDRESS_START + "0000.6EF0");
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 }
