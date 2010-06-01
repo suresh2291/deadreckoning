@@ -13,19 +13,18 @@ import java.util.logging.Logger;
  * @author Florian Lettner, Lukas Bischof, Peter Riedl
  * @version 1.0
  *
- * @brief The starter for the Dead Reckoning GUI
+ * @brief The starter for the Dead Reckoning GUI.
  *
- * starts a new DSR client and the according GUI
+ * Sstarts a new DSR client and the according GUI.
  */
-public class SunSpotHostApplication
-{
+public class SunSpotHostApplication {
 
     /**@brief instance of the GUI to show.*/
     static DeadReckoningInfoGUI g = new DeadReckoningInfoGUI();
 
     /**
      * @deprecated
-     * tests the gui with a "|" separated list of data
+     * @brief Tests the gui with a "|" separated list of data
      * notice the counting bug
      */
     private static void testGUI() {
@@ -47,7 +46,7 @@ public class SunSpotHostApplication
     }
 
     /**
-     * Print out our radio address.
+     * @brief Print out our radio address.
      */
     public void run() {
         long ourAddr = Spot.getInstance().getRadioPolicyManager().getIEEEAddress();
@@ -55,12 +54,11 @@ public class SunSpotHostApplication
     }
 
     /**
-     * Start up the host application.
+     * @brief Start up the host application.
      *
      * @param args any command line arguments
      */
-    public static void main(String[] args) throws Exception
-    {
+    public static void main(String[] args) throws Exception {
         SunSpotHostApplication app = new SunSpotHostApplication();
 
         new DSRClient(g);
