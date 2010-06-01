@@ -9,12 +9,25 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * DSR client gui
+ * @class SunSpotHostApplication
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @version 1.0
+ *
+ * @brief The starter for the Dead Reckoning GUI
+ *
+ * starts a new DSR client and the according GUI
  */
-public class SunSpotHostApplication {
+public class SunSpotHostApplication
+{
 
+    /**@brief instance of the GUI to show.*/
     static DeadReckoningInfoGUI g = new DeadReckoningInfoGUI();
 
+    /**
+     * @deprecated
+     * tests the gui with a "|" separated list of data
+     * notice the counting bug
+     */
     private static void testGUI() {
         StringBuffer buff = new StringBuffer();
         for (double i = 0d;; i = i + 0.1d) {
@@ -46,11 +59,10 @@ public class SunSpotHostApplication {
      *
      * @param args any command line arguments
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception
+    {
         SunSpotHostApplication app = new SunSpotHostApplication();
 
         new DSRClient(g);
-        testGUI();
-        //System.exit(0);
     }
 }
