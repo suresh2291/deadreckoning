@@ -1,8 +1,5 @@
 package at.fhooe.mcm.deadreckoning.filter;
 
-import com.sun.spot.util.Debug;
-import com.sun.squawk.util.StringTokenizer;
-
 /**
  * @class KalmanFilter
  * @author Florian Lettner, Lukas Bischof, Peter Riedl

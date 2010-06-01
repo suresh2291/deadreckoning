@@ -210,8 +210,8 @@ public class InertialSensor {
         temp += m_accelerationY[1] + "|";
         temp += m_velocityX[1] + "|";
         temp += m_velocityY[1] + "|";
-        temp += m_positionX[1] + "|";
-        temp += m_positionY[1] + "|";
+        temp += (m_positionX[1] - m_positionX[0]) + "|";
+        temp += (m_positionY[1] - m_positionY[0]) + "|";
         temp += m_distance + "|";
         temp += m_frameLength + "|";
         temp += m_kalmanFilter.currentStateToString();
