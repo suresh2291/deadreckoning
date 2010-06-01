@@ -42,4 +42,13 @@ public interface IFilter {
      * @return A float array storing the corrected values since the last update.
      */
     float[] getCorrectedValues();
+
+    /**
+     * @brief Serializes the filter data of the current state to a string.
+     *
+     * Each value is seperated by a pipe, so it can be parsed by any GUI later.
+     *
+     * @return A concatenated string carrying the current filter data.
+     */
+    String currentStateToString();
 }

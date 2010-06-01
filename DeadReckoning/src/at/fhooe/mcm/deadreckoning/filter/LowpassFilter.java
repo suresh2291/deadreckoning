@@ -13,8 +13,11 @@ package at.fhooe.mcm.deadreckoning.filter;
  */
 public class LowpassFilter implements IFilter {
 
-    /** @brief The time constant in seconds in order to determine the cutoff frequency. */
-    private static final float RC_TIME_CONSTANT = 0.25f;
+    /** @brief The time constant in seconds in order to determine the cutoff frequency (160Hz ~ 0.00625s) */
+    private static final float RC_TIME_CONSTANT = 0.00625f;
+
+    /** @brief The previously observed value. */
+    private float[] m_observed;
 
     /** @brief The filtered value. */
     private float[] m_corrected;
@@ -29,6 +32,7 @@ public class LowpassFilter implements IFilter {
     public void init(float[] _initialValues, int _dimension) {
        
         m_corrected = new float[_dimension];
+        m_observed  = new float[_dimension];
         m_corrected = _initialValues;
     }
 
@@ -41,15 +45,17 @@ public class LowpassFilter implements IFilter {
     public void update(float[] _observedValues, float _dtx) {
 
         // if dimensions do not match throw an exception
-        if (m_corrected.length != _observedValues.length) {
+        if (m_observed.length != _observedValues.length) {
             throw new RuntimeException("Array dimensions do not match");
         }
+
+        m_observed = _observedValues;
 
         // update smoothing factor according to the time passed
         float alpha = _dtx / (RC_TIME_CONSTANT + _dtx);
 
-        for (int i = 0; i < _observedValues.length; i++) {
-            m_corrected[i] = m_corrected[i] * (1.0f - alpha) + alpha* _observedValues[i];
+        for (int i = 0; i < m_observed.length; i++) {
+            m_corrected[i] = m_corrected[i] * (1.0f - alpha) + alpha* m_observed[i];
         }
     }
 
@@ -60,6 +66,28 @@ public class LowpassFilter implements IFilter {
      */
     public float[] getCorrectedValues() {
         return m_corrected;
+    }
+
+    /**
+     * @brief Serializes the filter data of the current state to a string.
+     *
+     * Each value is seperated by a pipe, so it can be parsed by any GUI later.
+     *
+     * @return A concatenated string carrying the current filter data.
+     */
+    public String currentStateToString() {
+
+        String temp = "";
+
+        for(int i = 0; i < m_observed.length; i++){
+            temp += m_observed[i] + "|";
+        }
+
+        for(int i = 0; i < m_corrected.length; i++){
+            temp += m_corrected[i] + "|";
+        }
+
+        return temp;
     }
 }
 

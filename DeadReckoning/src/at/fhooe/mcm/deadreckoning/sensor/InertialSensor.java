@@ -28,7 +28,7 @@ public class InertialSensor {
     private static final float DISCRIMINATION_SIZE = 2.0f;
 
     /** @brief A threshold to indicate movement ends. */
-    private static final float SLOWDOWN_THRESHOLD = 12.0f;
+    private static final float SLOWDOWN_THRESHOLD = 15.0f;
 
     /** @brief The number of samples used for zero threshold estimation. */
     private static final int NO_CALIBRATION_SAMPLES = 32;
@@ -90,6 +90,9 @@ public class InertialSensor {
     /** @brief The sensor offset for the y-axis. */
     private float m_offsetZ;
 
+    /** @brief The frame gap since the last update in ms. */
+    private float m_frameLength;
+
     /** @brief A flag to indicate if the the sensor is calibrated. */
     private boolean m_isCalibrated;
     
@@ -114,7 +117,6 @@ public class InertialSensor {
 
         m_offsetX = 0;
         m_offsetY = 0;
-        m_offsetZ = 0;
 
         m_isCalibrated = false;
 
@@ -136,12 +138,10 @@ public class InertialSensor {
         getSensorValues();
         m_offsetX += m_xAccelSample;
         m_offsetY += m_yAccelSample;
-        m_offsetZ += (m_zAccelSample - EARTH_ACCELERATION);
 
         if(m_calibrationCount == _noSamples) {
             m_offsetX /= (float)_noSamples;
             m_offsetY /= (float)_noSamples;
-            m_offsetZ /= (float)_noSamples;
             m_isCalibrated = true;
         }
 
@@ -171,6 +171,9 @@ public class InertialSensor {
      * @throws IOException
      */
     public void update(float _dt) throws IOException {
+
+        m_frameLength = _dt;
+
         if (!m_isCalibrated) {
             calibrate(NO_CALIBRATION_SAMPLES);
         } else {
@@ -190,6 +193,30 @@ public class InertialSensor {
      */
     public float getDistance() {
         return m_distance;
+    }
+
+    /**
+     * @brief Serializes the current sensor state to a string.
+     *
+     * Each value has to be seperated using pipes in order
+     * to be parsed back by the GUI.
+     *
+     * @return A string containing a representation of the current sensor state.
+     */
+    public String currentStateToString() {
+        String temp = "";
+        
+        temp += m_accelerationX[1] + "|";
+        temp += m_accelerationY[1] + "|";
+        temp += m_velocityX[1] + "|";
+        temp += m_velocityY[1] + "|";
+        temp += m_positionX[1] + "|";
+        temp += m_positionY[1] + "|";
+        temp += m_distance + "|";
+        temp += m_frameLength + "|";
+        temp += m_kalmanFilter.currentStateToString();
+
+        return temp;
     }
 
     /**
@@ -230,16 +257,6 @@ public class InertialSensor {
      */
     private void integrate(float _dt) {
 
-        float gravityOffset = (m_zAccelSample - m_offsetZ) / EARTH_ACCELERATION;
-
-        // correct earth gravity
-        if(gravityOffset < 1.0f) {
-           if(m_accelerationX[1] > m_accelerationY[1])
-               m_accelerationX[1] *= (1.0f - gravityOffset);
-            else
-               m_accelerationY[1] *= (1.0f - gravityOffset);
-        }
-
         // calculate new velocity
         m_velocityX[1] = m_velocityX[0] + m_accelerationX[1] * _dt;
         m_velocityY[1] = m_velocityY[0] + m_accelerationY[1] * _dt;
@@ -253,7 +270,6 @@ public class InertialSensor {
         m_accelerationY[0] = m_accelerationY[1];
         m_velocityX[0] = m_velocityX[1];
         m_velocityY[0] = m_velocityY[1];
-
     }
 
     /**
@@ -265,7 +281,7 @@ public class InertialSensor {
      */
     private void filterPosition(float _dtx) {
         m_lowpassFilter.update(new float[]{m_positionX[1], m_positionY[1]}, _dtx);
-
+ 
         float[] tempPos = m_lowpassFilter.getCorrectedValues();
 
         m_positionX[1] = tempPos[0];
@@ -297,13 +313,11 @@ public class InertialSensor {
          * be very slow movements. Additionally, assume that this sensor is used
          * by human people who are moving around on their own feet.
          */
-        if (((m_accelerationX[1] <= DISCRIMINATION_SIZE) && (m_accelerationX[1] >= -DISCRIMINATION_SIZE))
-                || ((m_accelerationX[1] >= 6) || (m_accelerationX[1] <= -6))) {
+        if ((m_accelerationX[1] <= DISCRIMINATION_SIZE) && (m_accelerationX[1] >= -DISCRIMINATION_SIZE)) {
             m_accelerationX[1] = 0;
         }
 
-        if (((m_accelerationY[1] <= DISCRIMINATION_SIZE) && (m_accelerationY[1] >= -DISCRIMINATION_SIZE))
-                || ((m_accelerationY[1] >= 6) || (m_accelerationY[1] <= -6))) {
+        if ((m_accelerationY[1] <= DISCRIMINATION_SIZE) && (m_accelerationY[1] >= -DISCRIMINATION_SIZE)) {
             m_accelerationY[1] = 0;
         }
     }

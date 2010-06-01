@@ -1,6 +1,7 @@
 package at.fhooe.mcm.deadreckoning.filter;
 
 import com.sun.spot.util.Debug;
+import com.sun.squawk.util.StringTokenizer;
 
 /**
  * @class KalmanFilter
@@ -73,6 +74,7 @@ public class KalmanFilter implements IFilter {
 
         m_observed = _observedValue;
 
+
         // compute the Kalman gain for each dimension
         for (int i = 0; i < m_kalman.length; i++) {
             m_kalman[i] = m_predictedvar[i] / (m_predictedvar[i] + m_noisevar[i]);
@@ -87,14 +89,7 @@ public class KalmanFilter implements IFilter {
         for (int i = 0; i < m_correctedvar.length; i++) {
             m_correctedvar[i] = m_predictedvar[i] * (1.0f - m_kalman[i]);
         }
-
-        // System.out.println("Observed  X: " + _observedValue[0]);
-        // System.out.println("Observed  Y: " + _observedValue[1]);
-        // System.out.println("Predicted X: " + m_predicted[0]);
-        // System.out.println("Predicted Y: " + m_predicted[1]);
-        // System.out.println("Corrected X: " + m_corrected[0]);
-        // System.out.println("Corrected Y: " + m_corrected[1]);
-
+        
         // predict next variances and values
         m_predictedvar = m_correctedvar;
         m_predicted = m_corrected;
@@ -107,5 +102,27 @@ public class KalmanFilter implements IFilter {
      */
     public float[] getCorrectedValues() {
         return m_corrected;
+    }
+
+    /**
+     * @brief Serializes the filter data of the current state to a string.
+     *
+     * Each value is seperated by a pipe, so it can be parsed by any GUI later.
+     *
+     * @return A concatenated string carrying the current filter data.
+     */
+    public String currentStateToString() {
+        
+        String temp = "";
+        
+        for(int i = 0; i < m_observed.length; i++){
+            temp += m_observed[i] + "|";
+        }
+        
+        for(int i = 0; i < m_corrected.length; i++){
+            temp += m_corrected[i] + "|";
+        }
+
+        return temp;
     }
 }

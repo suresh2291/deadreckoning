@@ -15,22 +15,31 @@ public class Timer {
 
     /** @brief Maximum delta time in nanoseconds. */
     private static final long MAX_DELTATIME = 250;
+
     /** @brief Represents the duration of one milliseconds in seconds. */
     private static final double ONE_MILLISECOND = 0.001;
+
     /** @brief Represents the duration of one second in milliseconds. */
     private static final long ONE_SECOND = 1000;
+
     /** @brief Number of ticks used to calculate average delta time. */
     private static final int MAX_CNT_TICKS = 30;
+
     /** @brief Current time. */
     private long m_time;
+
     /** @brief Current delta time. */
     private long m_dt;
+
     /** @brief Last time time stamp. */
     private long m_last;
+
     /** @brief Counter used to calculate average updates per second. */
     private int m_cntTicks;
+
     /** @brief Last time stamp used to calculate average updates per second. */
     private long m_lastAvg;
+    
     /** @brief Average delta time. */
     private long m_dtAvg;
 
