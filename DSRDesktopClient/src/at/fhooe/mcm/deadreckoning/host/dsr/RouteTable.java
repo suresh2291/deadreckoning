@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.sunspotworld.demo.dsr;
+package at.fhooe.mcm.deadreckoning.host.dsr;
 
 import java.util.Hashtable;
 

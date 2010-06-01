@@ -8,8 +8,7 @@
  *
  * Created on 26.05.2010, 16:59:57
  */
-
-package org.sunspotworld.demo.gui;
+package at.fhooe.mcm.deadreckoning.host.gui;
 
 import java.awt.EventQueue;
 import java.util.StringTokenizer;
@@ -348,8 +347,6 @@ public class DeadReckoningInfoGUI extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel accelerationXField;
     private javax.swing.JLabel accelerationYField;
@@ -385,11 +382,9 @@ public class DeadReckoningInfoGUI extends javax.swing.JFrame {
     private javax.swing.JLabel velocityYField;
     // End of variables declaration//GEN-END:variables
 
-    public void setData(String _data)
-    {
+    public void setData(String _data) {
         final StringTokenizer st = new StringTokenizer(_data, "|");
-        if(st.countTokens()!=14)
-        {
+        if (st.countTokens() != 14) {
             System.out.println("invalid data passed in gui");
             return;
         }

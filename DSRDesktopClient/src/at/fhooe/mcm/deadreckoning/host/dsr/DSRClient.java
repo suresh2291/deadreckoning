@@ -3,8 +3,9 @@
  * and open the template in the editor.
  */
 /*test*/
-package org.sunspotworld.demo.dsr;
+package at.fhooe.mcm.deadreckoning.host.dsr;
 
+import at.fhooe.mcm.deadreckoning.host.gui.DeadReckoningInfoGUI;
 import com.sun.spot.io.j2me.radiogram.Radiogram;
 import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
 import com.sun.spot.peripheral.NoRouteException;
@@ -14,84 +15,71 @@ import com.sun.spot.util.IEEEAddress;
 import java.io.IOException;
 import java.util.Vector;
 import javax.microedition.io.Connector;
-import org.sunspotworld.demo.gui.DeadReckoningInfoGUI;
 
 /**
  *
  * @author Peter
  */
-public class DSRClient
-{
+public class DSRClient {
+
     private static final int DISCOVERY_TIMEOUT = 10000;
     private static final String ADDRESS_START = "0014.4F01.";
     private static final int ROUTE_REQUEST_TIMEOUT = 500;
     private static final int BLINK_TIME = 500;
-   
     private int m_lastRRQID = 0;
     private Vector m_clientsInRange = new Vector();
-
     private RequestTable m_reqTable = new RequestTable();
     private RouteTable m_routeTable = new RouteTable();
-
-    
-
-
     private String m_baseAddr = "radiogram://";
     private int m_port = 66;
-    private String m_recvAddr = m_baseAddr+":"+m_port;
-    private String m_broadcastAddr = m_baseAddr+"broadcast:"+m_port;
-
+    private String m_recvAddr = m_baseAddr + ":" + m_port;
+    private String m_broadcastAddr = m_baseAddr + "broadcast:" + m_port;
     private boolean m_execRCVLoop = true;
     private boolean m_execNodeDiscovery = true;
     private boolean m_execBlink = true;
-
     private DeadReckoningInfoGUI m_gui = null;
 
-    public DSRClient(DeadReckoningInfoGUI _gui)
-    {
+    public DSRClient(DeadReckoningInfoGUI _gui) {
         m_gui = _gui;
         new Thread() {
-            public void run () {
+
+            public void run() {
             }
         }.start();
 
-        new Thread(){
-            public void run()
-            {
+        new Thread() {
+
+            public void run() {
                 rcvLoop();
             }
         }.start();
 
-        new Thread(){
-            public void run()
-            {
+        new Thread() {
+
+            public void run() {
                 //discoverNodesInRange();
             }
         }.start();
         //TestThread
-        new Thread()
-        {
-            public void run()
-            {
+        new Thread() {
+
+            public void run() {
                 //testSendData();
                 /*while(true!=false)
                 {
-                    performRREQ(ADDRESS_START+"0000.6B75");
+                performRREQ(ADDRESS_START+"0000.6B75");
                 }*/
             }
         }.start();
     }
 
-    public synchronized void sendData(final String _data, final String _addr)
-    {
+    public synchronized void sendData(final String _data, final String _addr) {
 
-        new Thread()
-        {
-            public void run()
-            {
+        new Thread() {
+
+            public void run() {
                 System.out.println("sending data");
-                if(!m_routeTable.contains(_addr))
-                {
+                if (!m_routeTable.contains(_addr)) {
                     System.out.println("route was not in table");
                     performRREQ(_addr);
                     try {
@@ -101,113 +89,81 @@ public class DSRClient
                     }
                 }
 
-                if(m_routeTable.contains(_addr))
-                {
+                if (m_routeTable.contains(_addr)) {
                     System.out.println("route is in table");
                     RouteRecord r = m_routeTable.getRouteToTarget(_addr);
                     sendDataOverRoute(new DataPkg(r, _data).toString(), r);
-                }
-                else
-                {
+                } else {
                     System.out.println("route still not in table");
                 }
             }
         }.start();
 
-       
+
     }
 
-    private void discoverNodesInRange()
-    {
-        while(m_execNodeDiscovery)
-        {
+    private void discoverNodesInRange() {
+        while (m_execNodeDiscovery) {
             System.out.println("discovering spots in range...");
             m_clientsInRange.removeAllElements();
             broadcastPing();
-            try
-            {
+            try {
                 Thread.sleep(DISCOVERY_TIMEOUT);
-            }
-            catch (InterruptedException ex)
-            {
+            } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
         }
     }
 
-    private void rcvLoop()
-    {
+    private void rcvLoop() {
         RadiogramConnection rxConn = null;
-        try
-        {
+        try {
             rxConn = (RadiogramConnection) Connector.open(m_recvAddr);
             rxConn.setMaxBroadcastHops(1);
             Radiogram rrg = (Radiogram) rxConn.newDatagram(rxConn.getMaximumLength());
-            while(m_execRCVLoop)
-            {
+            while (m_execRCVLoop) {
                 rrg.reset();
                 rxConn.receive(rrg);
                 processReceivedMessage(rrg);
             }
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             ex.printStackTrace();
-        }
-        finally
-        {
-            if(null!=rxConn)
-            {
-                try
-                {
+        } finally {
+            if (null != rxConn) {
+                try {
                     rxConn.close();
-                } 
-                catch (IOException ex)
-                {
+                } catch (IOException ex) {
                     ex.printStackTrace();
                 }
             }
         }
     }
 
-    private void processReceivedMessage(Radiogram _rrg)
-    {
+    private void processReceivedMessage(Radiogram _rrg) {
         String msg = "";
         try {
             msg = _rrg.readUTF();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        if(msg.equals("ping"))
-        {
-            sendPingACK(m_baseAddr+_rrg.getAddress()+":"+m_port);
-        }
-        else if(msg.equals("ack"))
-        {
+        if (msg.equals("ping")) {
+            sendPingACK(m_baseAddr + _rrg.getAddress() + ":" + m_port);
+        } else if (msg.equals("ack")) {
             addClientInRange(_rrg.getAddress());
-        }
-        else if(msg.startsWith("[RREQ]"))
-        {
+        } else if (msg.startsWith("[RREQ]")) {
             System.out.println("[RREQ] discovered");
             RREQPkg pkg = new RREQPkg(msg);
             IITupel tupel = pkg.getIITupel();
-            if(m_reqTable.contains(tupel)||pkg.getRouteRecord().getInitiator().equals(getOwnAddress()))
-            {
+            if (m_reqTable.contains(tupel) || pkg.getRouteRecord().getInitiator().equals(getOwnAddress())) {
                 System.out.println("[RREQ] ignored");
                 return;
-            }
-            else if(pkg.getTargetAddress().equals(getOwnAddress()))
-            {
+            } else if (pkg.getTargetAddress().equals(getOwnAddress())) {
                 sendRREPTarget(pkg.getRouteRecord());
                 m_reqTable.addTupel(tupel);
-            }
-            else if(m_routeTable.contains(pkg.getTargetAddress()))
-            {
+            } else if (m_routeTable.contains(pkg.getTargetAddress())) {
                 sendRREPRouteToTarget(pkg.getRouteRecord(), pkg.getTargetAddress());
                 m_reqTable.addTupel(tupel);
-            }
-            else
-            {
+            } else {
                 System.out.println("forwarding RREQ");
                 m_reqTable.addTupel(tupel);
                 /*RouteRecord r = pkg.getRouteRecord();
@@ -218,41 +174,30 @@ public class DSRClient
             //m_reqTable.addTupel(tupel);
             System.out.println("added tupel to list");
             //System.out.println(msg);
-        }
-        else if(msg.startsWith("[RREP]"))
-        {
+        } else if (msg.startsWith("[RREP]")) {
             //System.out.println("RREP discovered");
             RREPPkg pkg = new RREPPkg(msg);
-            if(pkg.getRouteRecord().getInitiator().equals(getOwnAddress()))
-            {
+            if (pkg.getRouteRecord().getInitiator().equals(getOwnAddress())) {
                 m_routeTable.addRoute(pkg.getRouteRecord().getTarget(), pkg.getRouteRecord());
                 System.out.println("added route to table");
-            }
-            else
-            {
+            } else {
                 forwardRREP(pkg);
                 System.out.println("[RREP] forwarded");
             }
             System.out.println(msg);
-        }
-        else if(msg.startsWith("[DATA]"))
-        {
+        } else if (msg.startsWith("[DATA]")) {
             DataPkg pkg = new DataPkg(msg);
-            if(pkg.getRouteRecord().getTarget().equals(getOwnAddress()))
-            {
-                System.out.println("###[DATA] received:"+msg.substring(msg.indexOf("]")+1));
+            if (pkg.getRouteRecord().getTarget().equals(getOwnAddress())) {
+                System.out.println("###[DATA] received:" + msg.substring(msg.indexOf("]") + 1));
                 m_gui.setData(pkg.getData());
-            }
-            else
-            {
+            } else {
                 forwardData(pkg);
                 System.out.println("[DATA] forwarded");
             }
         }
     }
 
-    private void sendRREPTarget(RouteRecord _rr)
-    {
+    private void sendRREPTarget(RouteRecord _rr) {
         System.out.println("sending RREP target");
         _rr.addNodeAddr(getOwnAddress());
         RouteRecord r = new RouteRecord(_rr.toString());
@@ -262,8 +207,7 @@ public class DSRClient
 
     }
 
-    private void sendRREPRouteToTarget(RouteRecord _rr, String _target)
-    {
+    private void sendRREPRouteToTarget(RouteRecord _rr, String _target) {
         System.out.println("sending RREP route to target");
         RouteRecord r = _rr.concat(m_routeTable.getRouteToTarget(_target));
         _rr.addNodeAddr(getOwnAddress());
@@ -271,11 +215,9 @@ public class DSRClient
 
     }
 
-    private void testSendData()
-    {
-        while(true)
-        {
-            sendData("geilo", ADDRESS_START+"0000.6EF0");
+    private void testSendData() {
+        while (true) {
+            sendData("geilo", ADDRESS_START + "0000.6EF0");
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException ex) {
@@ -284,66 +226,56 @@ public class DSRClient
         }
     }
 
-
-    private void sendDataOverRoute(String _data, RouteRecord _rr)
-    {
+    private void sendDataOverRoute(String _data, RouteRecord _rr) {
         String addr = _rr.getNextHop(getOwnAddress());
-        sendDataToTarget(_data, m_baseAddr+addr+":"+m_port);
+        sendDataToTarget(_data, m_baseAddr + addr + ":" + m_port);
     }
 
-    private void sendPingACK(String _addr)
-    {
+    private void sendPingACK(String _addr) {
         sendDataToTarget("ack", _addr);
     }
 
-    private void broadcastPing()
-    {
+    private void broadcastPing() {
         sendBroadcast("ping");
     }
 
-    private void performRREQ(String _target)
-    {
+    private void performRREQ(String _target) {
         RouteRecord r = new RouteRecord();
         r.addNodeAddr(getOwnAddress());
         m_lastRRQID++;
         sendBroadcast(new RREQPkg(getOwnAddress(), _target, r, m_lastRRQID).toString());
     }
-    private void forwardRREQ(RREQPkg _pkg)
-    {
+
+    private void forwardRREQ(RREQPkg _pkg) {
         _pkg.getRouteRecord().addNodeAddr(getOwnAddress());
         sendBroadcast(_pkg.toString());
     }
 
-    private void forwardData(DataPkg _pkg)
-    {
+    private void forwardData(DataPkg _pkg) {
         sendDataOverRoute(_pkg.toString(), _pkg.getRouteRecord());
-       // String addr = _pkg.getRouteRecord().getNextHop(getOwnAddress());
+        // String addr = _pkg.getRouteRecord().getNextHop(getOwnAddress());
         //sendDataThreaded(_pkg.toString(), addr);
     }
 
-    private void forwardRREP(RREPPkg _pkg)
-    {
+    private void forwardRREP(RREPPkg _pkg) {
         sendDataOverRoute(_pkg.toString(), _pkg.getRouteRecord().reverse());
     }
 
-    public void sendBroadcast(String _msg)
-    {
+    public void sendBroadcast(String _msg) {
         sendDataToTarget(_msg, m_broadcastAddr);
     }
 
-    private synchronized void sendDataToTarget(final String _msg, final String _addr)
-    {
+    private synchronized void sendDataToTarget(final String _msg, final String _addr) {
 
-       // new Thread()
-         {
-         //   public void run ()
+        // new Thread()
+        {
+            //   public void run ()
             {
                 RadiogramConnection txConn = null;
-                try
-                {
+                try {
                     txConn = (RadiogramConnection) Connector.open(_addr);
                     txConn.setMaxBroadcastHops(1);
-                    
+
 
                     Radiogram tdg = (Radiogram) txConn.newDatagram(txConn.getMaximumLength());
                     tdg.reset();
@@ -352,37 +284,25 @@ public class DSRClient
                     //m_sendBuffer = "";
 
                     //m_blinkCols[ACK_LED] = LEDColor.GREEN;
-                }
-                catch(NoRouteException _nae)
-                {
+                } catch (NoRouteException _nae) {
                     m_routeTable.clear();
                     System.out.println("routing table was cleared after no ack");
-                }
-                catch (IOException _ioe)
-                {
-                    System.out.println("send exception (IO):"+_ioe.getMessage());
+                } catch (IOException _ioe) {
+                    System.out.println("send exception (IO):" + _ioe.getMessage());
 
                     _ioe.printStackTrace();
                     //m_blinkCols[ACK_LED] = LEDColor.RED;
-                }
-                catch(Exception _e)
-                {
-                    System.out.println("send exception:"+_e.getMessage());
-                }
-                finally
-                {
+                } catch (Exception _e) {
+                    System.out.println("send exception:" + _e.getMessage());
+                } finally {
                     //m_sendInProgress = false;
                     //m_blinkLEDIdx = ACK_LED;
                     //blink();
-                    try
-                    {
-                        if(txConn!=null)
-                        {
+                    try {
+                        if (txConn != null) {
                             txConn.close();
                         }
-                    }
-                    catch (IOException ex)
-                    {
+                    } catch (IOException ex) {
                         ex.printStackTrace();
                     }
                 }
@@ -391,51 +311,41 @@ public class DSRClient
         }//.start();
     }
 
-   /* public void blink()
+    /* public void blink()
     {
-        new Thread()
-        {
-            public void run()
-            {
-                m_leds[m_blinkLEDIdx].setColor(m_blinkCols[m_blinkLEDIdx]);
-                m_leds[m_blinkLEDIdx].setOn();
-                try {
-                    Thread.sleep(m_blinkSleep);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-                m_leds[m_blinkLEDIdx].setOff();
-            }
-        }.start();
+    new Thread()
+    {
+    public void run()
+    {
+    m_leds[m_blinkLEDIdx].setColor(m_blinkCols[m_blinkLEDIdx]);
+    m_leds[m_blinkLEDIdx].setOn();
+    try {
+    Thread.sleep(m_blinkSleep);
+    } catch (InterruptedException ex) {
+    ex.printStackTrace();
+    }
+    m_leds[m_blinkLEDIdx].setOff();
+    }
+    }.start();
     }*/
-   
-
-    private void addClientInRange(String _addr)
-    {
-        if(m_clientsInRange.contains(_addr))
-        {
-            System.out.println(_addr+" already in list");
-        }
-        else
-        {
+    private void addClientInRange(String _addr) {
+        if (m_clientsInRange.contains(_addr)) {
+            System.out.println(_addr + " already in list");
+        } else {
             m_clientsInRange.addElement(_addr);
-            System.out.println("added "+_addr+" to list of in range nodes");
+            System.out.println("added " + _addr + " to list of in range nodes");
         }
     }
 
-    private String getOwnAddress()
-    {
-        String addr = IEEEAddress.toDottedHex(    RadioFactory.
-                                            getRadioPolicyManager().
-                                            getIEEEAddress());
-         return addr;
+    private String getOwnAddress() {
+        String addr = IEEEAddress.toDottedHex(RadioFactory.getRadioPolicyManager().
+                getIEEEAddress());
+        return addr;
     }
 
-    public void stop()
-    {
+    public void stop() {
         m_execRCVLoop = false;
         m_execNodeDiscovery = false;
         m_execBlink = false;
     }
-
 }
