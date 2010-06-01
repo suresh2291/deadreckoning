@@ -3,6 +3,9 @@
     <type>org.netbeans.modules.ant.freeform</type>
     <configuration>
         <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
+            <name>DSRDesktopClient</name>
+        </general-data>
+        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/2">
             <!--Do not use Project Properties customizer when editing this file manually.-->
             <name>DSRDesktopClient</name>
             <properties>
@@ -17,6 +20,9 @@
                     <type>java</type>
                     <location>src</location>
                 </source-folder>
+                <build-file>
+                    <location>build</location>
+                </build-file>
             </folders>
             <ide-actions>
                 <action name="build">

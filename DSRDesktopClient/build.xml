@@ -95,7 +95,7 @@
         <javadoc destdir="doc"
 	         author="true"
 		 sourcepath="src" 
-		 packagenames="org.sunspotworld.demo"
+		 packagenames="at.fhooe.mcm.deadreckoning.host.application"
 		 windowtitle="My Project -- Host-side v1.0"
 		 doctitle="My Project -- Host-side (Version 1.0)" >
 	    <classpath path="${hostagent.compile.classpath}" />
