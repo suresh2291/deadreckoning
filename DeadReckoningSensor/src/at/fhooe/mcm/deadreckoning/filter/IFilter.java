@@ -2,15 +2,15 @@ package at.fhooe.mcm.deadreckoning.filter;
 
 /**
  * @class IFilter
- * @author Florian Lettner, Lukas Bischof, Peter Riedl
- * @date 23.05.2010
- * @version 1.0
- *
  * @brief This interface can be used to implement different filters.
  *
  * Filters can be used to optimize sensor data and to improve reliability. Heuristic
  * filters require initial values and updates with measured values to predict future
  * values.
+ * 
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 23.05.2010
+ * @version 1.0
  */
 public interface IFilter {
 

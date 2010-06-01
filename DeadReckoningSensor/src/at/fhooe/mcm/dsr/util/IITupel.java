@@ -2,14 +2,16 @@ package at.fhooe.mcm.dsr.util;
 
 /**
  * @class IITupel
- * @author Florian Lettner, Lukas Bischof, Peter Riedl
- * @version 1.0
- *
  * @brief This class represents an IITupel package used by DSR.
  *
  * An IITupel consists of the initiator and the ID of a RREQ package. That
  * information is used to determine whether a RREQ package is processed or
  * discarded.
+ *
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 14.05.2010
+ * @version 1.0
+ *
  */
 public class IITupel {
 

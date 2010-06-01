@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.fhooe.mcm.deadreckoning.Communication;
+package at.fhooe.mcm.deadreckoning.communication;
 
 import at.fhooe.mcm.deadreckoning.sensor.InertialSensor;
 import com.sun.spot.io.j2me.radiogram.RadiogramConnection;

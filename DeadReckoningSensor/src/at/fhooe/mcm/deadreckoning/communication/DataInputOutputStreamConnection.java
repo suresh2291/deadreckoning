@@ -26,7 +26,7 @@
  * The first one is used with DataInputStream - DataOutputStream
  * The second one is used with RadioInputStream - RadioOutputStream
  */
-package at.fhooe.mcm.deadreckoning.Communication;
+package at.fhooe.mcm.deadreckoning.communication;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

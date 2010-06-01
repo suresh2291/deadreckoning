@@ -22,15 +22,16 @@ import javax.microedition.io.Connector;
 
 /**
  * @class DSRClient
- * @author Florian Lettner, Lukas Bischof, Peter Riedl
- * @version 1.0
- *
  * @brief The class with all the logic required for Dynamic Source Routing.
- * 
+ *
  * The only public funtion "sendData" is used to send data to any host in the
  * network. In order to perform dynamic soure routing, the client listens to any
  * connections on port 66 all the time. The received packets are inspected and
  * treated according to their type ([RREQ], [RREP] and [DATA].
+ *
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 12.05.2010
+ * @version 1.0
  */
 public class DSRClient {
 
@@ -55,7 +56,7 @@ public class DSRClient {
     /** @brief Color for indicating receiving data. */
     private static final LEDColor RECEIVE_DATA_COL = LEDColor.GREEN;
 
-    /** @brief the first 8 digits of all sunSPOTS could be used for reduction of packet overhead. */
+    /** @brief The first 8 digits of all sunSPOTS could be used for reduction of packet overhead. */
     private static final String ADDRESS_START = "0014.4F01.";
 
     /** @brief Base address of all connections indicating a radiogram connection. */

@@ -8,16 +8,16 @@ import com.sun.spot.sensorboard.peripheral.IAccelerometer3D;
 import java.io.IOException;
 
 /**
- * @class KalmanFilter
- * @author Florian Lettner, Lukas Bischof, Peter Riedl
- * @date 12.05.2010
- * @version 2.0
- *
+ * @class InertialSensor
  * @brief This class provides a deadreckoning algorithm based on inertial navigation techniques.
  *
  * This algorithm uses accelerometers to not calculate exact positions but to provide accurate
  * m_distance information. This algorithm only uses two axis of a accelerometer and does not depend
  * on gyroscopes. For accuracy multiple filtering strategies are used.
+ *
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 12.05.2010
+ * @version 2.0
  */
 public class InertialSensor {
 
@@ -37,7 +37,7 @@ public class InertialSensor {
     private IAccelerometer3D m_accel;
 
     /** @brief A counter to indicate how many calibration samples have been taken. */
-    private int m_calibrationCount = 0;
+    private int m_calibrationCount;
     
     /** @brief Storage for the current and the previous x-acceleration. */
     private float[] m_accelerationX;
@@ -97,7 +97,7 @@ public class InertialSensor {
     private boolean m_isCalibrated;
     
     /**
-     * @brief Creates a new instance of an <code>InertialSensor</code>
+     * @brief Creates a new instance of an <code>InertialSensor</code>.
      */
     public InertialSensor() {
         m_accelerationX = new float[2];

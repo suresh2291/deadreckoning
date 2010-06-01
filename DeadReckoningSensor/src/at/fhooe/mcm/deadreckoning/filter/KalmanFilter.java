@@ -1,15 +1,15 @@
 package at.fhooe.mcm.deadreckoning.filter;
 
 /**
- * @class KalmanFilter
- * @author Florian Lettner, Lukas Bischof, Peter Riedl
- * @date 20.05.2010
- * @version 2.0
- *
  * @brief This class provides a recursive prediction algorithm based on the Kalman filter.
  *
  * The application for which it is designed is cleaning up multi-dimensional sensor errors,
  * based on sensor noise, user input and measurement.
+ *
+ * @class KalmanFilter
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 20.05.2010
+ * @version 2.0
  */
 public class KalmanFilter implements IFilter {
 
@@ -27,9 +27,9 @@ public class KalmanFilter implements IFilter {
     float[] m_observed;
     /** @brief The Kalman gain. */
     float[] m_kalman;
-    /** @brief The m_corrected variance. */
+    /** @brief The corrected variance. */
     float[] m_correctedvar;
-    /** @brief The m_predicted value. */
+    /** @brief The predicted value. */
     float[] m_predicted;
 
     /**

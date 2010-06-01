@@ -13,11 +13,11 @@ import javax.microedition.midlet.MIDletStateChangeException;
 
 /**
  * @class DeadReckoningAPI
+ * @brief This class represents a dead reckoning application structure.
+ *
  * @author Florian Lettner, Lukas Bischof, Peter Riedl
  * @date 15.05.2010
  * @version 2.0
- *
- * @brief This class represents a dead reckoning application structure.
  */
 public class DeadReckoningAPI extends MIDlet {
 
@@ -31,7 +31,7 @@ public class DeadReckoningAPI extends MIDlet {
     private InertialSensor m_sensor;
 
     /** @brief A distance sync in order to correct sensor measurements by using reference sensors. */
-    private DistanceSync m_distSync = null;
+    private DistanceSync m_distSync;
 
     /** @brief A clock in order to measure time. */
     private Timer m_clock;

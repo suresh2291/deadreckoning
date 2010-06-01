@@ -4,12 +4,13 @@ import java.util.Vector;
 
 /**
  * @class RequestTable
- * @author Florian Lettner, Lukas Bischof, Peter Riedl
- * @version 1.0
- *
  * @brief This class represents an RequestTable for storage of IITupels.
  *
  * Container for IItupels of several RREQs.
+ *
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 14.05.2010
+ * @version 1.0
  */
 public class RequestTable {
 

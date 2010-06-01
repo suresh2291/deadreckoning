@@ -5,25 +5,25 @@ import at.fhooe.mcm.dsr.util.RouteRecord;
 
 /**
  * @class RREQPkg
- * @author Florian Lettner, Lukas Bischof, Peter Riedl
- * @version 1.0
- *
  * @brief This class represents a RREQ package used by DSR.
  *
  * Container for a RREQ package in DSR. It contains the initiator, the target, a
  * RouteRecord and an id.
  *
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 13.05.2010
+ * @version 1.0
  */
 public class RREQPkg {
 
     /**@brief The initiator of the RREQ. */
-    private String m_initiator = "";
+    private String m_initiator;
 
     /**@brief The target of the RREQ. */
-    private String m_target = "";
+    private String m_target;
 
     /**@brief The route record of the RREQ. */
-    private RouteRecord m_route = null;
+    private RouteRecord m_route;
 
     /**@brief The ID of the RREQ. */
     private int m_id = -1;

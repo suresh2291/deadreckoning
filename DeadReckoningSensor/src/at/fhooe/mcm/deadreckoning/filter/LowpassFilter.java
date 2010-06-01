@@ -1,15 +1,15 @@
 package at.fhooe.mcm.deadreckoning.filter;
 
 /**
- * @class KalmanFilter
- * @author Florian Lettner, Lukas Bischof, Peter Riedl
- * @date 20.05.2010
- * @version 2.0
- *
+ * @class LowpassFilter
  * @brief This class provides a lowpass algorithm derived from the Kalman filter.
  *
  * The application for which it is designed is cleaning up multi-dimensional sensor errors,
  * based on sensor noise, user input and measurement.
+ * 
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 20.05.2010
+ * @version 2.0
  */
 public class LowpassFilter implements IFilter {
 

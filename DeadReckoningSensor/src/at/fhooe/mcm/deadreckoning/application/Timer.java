@@ -2,14 +2,14 @@ package at.fhooe.mcm.deadreckoning.application;
 
 /**
  * @class Timer
- * @author Florian Lettner, Lukas Bischof, Peter Riedl
- * @date 24.05.2010
- * @version 1.0
- *
  * @brief This class represents a modified high precision timer.
  *
  * High precision timers are used in the gaming domain for most accurate updates.
  * This is a modified version that works with milliseconds instead of nanoseconds.
+ *
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 24.05.2010
+ * @version 1.0
  */
 public class Timer {
 

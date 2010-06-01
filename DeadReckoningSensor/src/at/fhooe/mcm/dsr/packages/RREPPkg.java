@@ -4,13 +4,14 @@ import at.fhooe.mcm.dsr.util.RouteRecord;
 
 /**
  * @class RREPPkg
- * @author Florian Lettner, Lukas Bischof, Peter Riedl
- * @version 1.0
- *
- * @brief this class represents a RREP package used by DSR.
+ * @brief This class represents a RREP package used by DSR.
  *
  * Container for a RREP package in DSR. It contains the route from initiator
  * to target.
+ *
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 13.05.2010
+ * @version 1.0
  */
 public class RREPPkg {
 

@@ -4,13 +4,15 @@ import at.fhooe.mcm.dsr.util.RouteRecord;
 
 /**
  * @class DataPkg
- * @author Florian Lettner, Lukas Bischof, Peter Riedl
- * @version 1.0
- *
  * @brief This class represents a data package used by DSR.
  *
  * Container for a data package in DSR. It contains the route from initiator
  * to target and the actual data.
+ *
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 13.05.2010
+ * @version 1.0
+
  */
 public class DataPkg {
 
