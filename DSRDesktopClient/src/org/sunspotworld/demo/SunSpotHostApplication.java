@@ -1,10 +1,11 @@
 package org.sunspotworld.demo;
 
 import com.sun.spot.peripheral.Spot;
-
 import com.sun.spot.util.IEEEAddress;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.sunspotworld.demo.dsr.DSRClient;
 import org.sunspotworld.demo.gui.DeadReckoningInfoGUI;
 
