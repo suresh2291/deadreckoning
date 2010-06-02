@@ -399,8 +399,8 @@ public class DeadReckoningInfoGUI extends javax.swing.JFrame {
     }
 
     /**
-     * delimits the passed string representation of a floating point value
-     * to the specified digits after the period
+     * @brief Delimits the passed string representation of a floating point value
+     * to the specified digits after the period.
      * @param _str the string to delimit
      * @param _digAfterPeriod the number of digits after the period
      * @return the delimited string
