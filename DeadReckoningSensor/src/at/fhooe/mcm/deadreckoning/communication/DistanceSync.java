@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.fhooe.mcm.deadreckoning.communication;
+package at.fhooe.mcm.deadreckoning.Communication;
 
 import at.fhooe.mcm.deadreckoning.sensor.InertialSensor;
 import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
@@ -14,16 +14,33 @@ import javax.microedition.io.Datagram;
 import javax.microedition.io.DatagramConnection;
 
 /**
+ * @class DistanceSync
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 24.05.2010
+ * @version 1.0
  *
- * @author bibo
+ * @brief This class is responsible for broadcasting the distance and calculating the average between two SPOTs.
+ *
+ * The class uses two threads for receiving and sending. the receiving thread
+ * blocks at the receiving function and calculates the average between the own distance
+ * and the received distance.
+ * The sending thread sends in a interval of 5 seconds the own distance as broadcast.
+ * CAUTION: initialize the class ONLY after the init() of InertialSensor m_sensor!
  */
-public class DistanceSync {
-
+public class DistanceSync
+{
+    /** @brief Boolean, defines if the thread should run or not. */
     private boolean m_runThread = true;
+    /** @brief reference to the inertial sensor for getting the distance. */
     private InertialSensor m_sensor = null;
+    /** @brief own distance. */
     private float m_owndist = 0;
+    /** @brief other distance. */
     private float m_foreigndist = 0;
+    /** @brief average distance. */
     private float m_avg = 0;
+    /** @brief Send thread timeout. */
+    private int m_timeOut = 1000;
 
     private DistanceSync() {
     }
@@ -33,40 +50,6 @@ public class DistanceSync {
 
         startSenderThread();
         startReceiverThread();
-        /*
-        rConnection = new DataInputOutputStreamConnection();
-        rConnection.connect("broadcast");
-        
-        m_receiveAndSend = new Thread() {
-
-        public void run() {
-        String recv = "";
-        while (m_runThread) {
-        recv = rConnection.receive();
-        if (recv.substring(0, 4).equals("DIST:")) {
-        try {
-        float foreigndist = Float.parseFloat(recv.substring(5));
-        float owndist = m_sensor.getDistance();
-        m_avg = (foreigndist + owndist) / 2;
-        rConnection.send("AVG:" + m_avg, 0);
-        } catch (NumberFormatException _nfe) {
-        _nfe.printStackTrace();
-        } catch (IOException _ioe) {
-        _ioe.printStackTrace();
-        } catch (NullPointerException _nex) {
-        _nex.printStackTrace();
-        }
-        }
-        }
-        try {
-        Thread.sleep(500);
-        } catch (InterruptedException ex) {
-        ex.printStackTrace();
-        }
-        }
-        };
-        m_receiveAndSend.start();
-         */
     }
 
     public void startReceiverThread() {
@@ -138,13 +121,13 @@ public class DistanceSync {
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
-                    Utils.sleep(5000);
+                    Utils.sleep(m_timeOut);
                 }
             }
         }.start();
     }
 
-    public float getAverage() {
+    public float getAverage(float _dist) {
         return m_avg;
     }
 }
