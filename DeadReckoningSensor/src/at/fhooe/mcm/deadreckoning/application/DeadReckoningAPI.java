@@ -78,6 +78,39 @@ public class DeadReckoningAPI extends MIDlet {
     private void run() throws IOException {
 
         m_sensor.init();
+        /**
+         * The most simple state - the SPOT is broadcasting his distance to every
+         * SPOT in range.
+         * This could be problematic if more SPOTs are running the same program
+         * because DistanceSync is constructed for calculating the Average
+         * distance of two SPOTs on the same person.
+         * /-------------------------------------------------------------------\
+         * | m_distSync = new DistanceSync(m_sensor);                          |
+         * \-------------------------------------------------------------------/
+         */
+        /**
+         * In case of Transceiver SPOT:
+         * The Transceiver SPOT should not be able to send his own distance
+         * values, as the values were absolutely absurd.
+         * The CTor would look like this:
+         * /-------------------------------------------------------------------\
+         * | m_distSync = new DistanceSync(m_sensor, false);                   |
+         * \-------------------------------------------------------------------/
+         */
+
+        /**
+         * In case of other SPOTs using this program:
+         * If more then two SPOTs are using this program, for example for 2 or
+         * more persons, it would be absolutely nonsense that all SPOTs are
+         * broadcasting their distance. So, there is a third CTor, which look
+         * like this:
+         * /-------------------------------------------------------------------\
+         * | m_distSync = new DistanceSync(m_sensor, <SPOT address as String>);|
+         * \-------------------------------------------------------------------/
+         * You could also use "broadcast" as address, but this is the default
+         * value.
+         */
+
         m_distSync = new DistanceSync(m_sensor);
 
         while (true) {
