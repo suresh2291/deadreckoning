@@ -127,7 +127,7 @@ public class DistanceSync
         }.start();
     }
 
-    public float getAverage(float _dist) {
+    public float getAverage() {
         return m_avg;
     }
 }
