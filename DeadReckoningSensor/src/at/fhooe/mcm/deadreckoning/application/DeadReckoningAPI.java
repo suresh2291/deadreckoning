@@ -29,7 +29,7 @@
 */
 package at.fhooe.mcm.deadreckoning.application;
 
-import at.fhooe.mcm.deadreckoning.communication.DistanceSync;
+import at.fhooe.mcm.deadreckoning.Communication.DistanceSync;
 import at.fhooe.mcm.deadreckoning.sensor.InertialSensor;
 import at.fhooe.mcm.dsr.DSRClient;
 import com.sun.spot.util.Utils;
