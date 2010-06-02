@@ -63,7 +63,6 @@ public class DeadReckoningInfoGUI extends javax.swing.JFrame {
         inputXField = new javax.swing.JLabel();
         inputYField = new javax.swing.JLabel();
         correctedXField = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
         correctedYField = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -129,7 +128,7 @@ public class DeadReckoningInfoGUI extends javax.swing.JFrame {
 
         intervalField.setText("----------");
 
-        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 24));
+        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(0, 153, 0));
         jLabel12.setText("Distance Avg:");
 
@@ -162,10 +161,10 @@ public class DeadReckoningInfoGUI extends javax.swing.JFrame {
                         .addGap(99, 99, 99)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(jLabel10)
                                     .addComponent(jLabel9))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGap(18, 18, 18)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(velocityXField)
                                     .addComponent(velocityYField)))
@@ -204,17 +203,19 @@ public class DeadReckoningInfoGUI extends javax.swing.JFrame {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel1)
-                                    .addComponent(jLabel9)
                                     .addComponent(accelerationXField))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel2)
-                                    .addComponent(jLabel10)
                                     .addComponent(accelerationYField)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(velocityXField)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(velocityXField)
+                                    .addComponent(jLabel9))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(velocityYField)))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(velocityYField)
+                                    .addComponent(jLabel10))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -241,31 +242,31 @@ public class DeadReckoningInfoGUI extends javax.swing.JFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Kalman Filter", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 18))); // NOI18N
 
-        jLabel19.setFont(new java.awt.Font("Tahoma", 0, 14));
+        jLabel19.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel19.setText("Input X:");
 
-        jLabel22.setFont(new java.awt.Font("Tahoma", 0, 14));
+        jLabel22.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel22.setText("Input Y:");
 
-        jLabel25.setFont(new java.awt.Font("Tahoma", 0, 14));
+        jLabel25.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel25.setText("Corrected X:");
 
-        jLabel28.setFont(new java.awt.Font("Tahoma", 0, 14));
+        jLabel28.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel28.setText("Corrected Y:");
 
-        inputXField.setFont(new java.awt.Font("Tahoma", 0, 14));
+        inputXField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         inputXField.setForeground(new java.awt.Color(255, 0, 0));
         inputXField.setText("----------");
 
-        inputYField.setFont(new java.awt.Font("Tahoma", 0, 14));
+        inputYField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         inputYField.setForeground(new java.awt.Color(255, 0, 0));
         inputYField.setText("----------");
 
-        correctedXField.setFont(new java.awt.Font("Tahoma", 0, 14));
+        correctedXField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         correctedXField.setForeground(new java.awt.Color(0, 153, 0));
         correctedXField.setText("----------");
 
-        correctedYField.setFont(new java.awt.Font("Tahoma", 0, 14));
+        correctedYField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         correctedYField.setForeground(new java.awt.Color(0, 153, 0));
         correctedYField.setText("----------");
 
@@ -274,65 +275,51 @@ public class DeadReckoningInfoGUI extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 1, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel25)
-                        .addGap(18, 18, 18))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel19)
-                        .addGap(47, 47, 47)))
+                    .addComponent(jLabel25)
+                    .addComponent(jLabel19))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(correctedXField)
-                    .addComponent(inputXField))
-                .addGap(98, 98, 98)
+                    .addComponent(inputXField)
+                    .addComponent(correctedXField))
+                .addGap(107, 107, 107)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel22)
-                    .addComponent(jLabel28))
-                .addGap(18, 18, 18)
+                    .addComponent(jLabel28)
+                    .addComponent(jLabel22))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(inputYField)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(correctedYField)
-                        .addGap(229, 229, 229))))
+                    .addComponent(inputYField)
+                    .addComponent(correctedYField))
+                .addGap(237, 237, 237))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel19)
-                    .addComponent(inputYField)
                     .addComponent(inputXField)
-                    .addComponent(jLabel22))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(23, 23, 23))
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel28)
-                            .addComponent(correctedYField))
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel25)
-                            .addComponent(correctedXField))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel22)
+                    .addComponent(inputYField))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel25)
+                    .addComponent(correctedXField)
+                    .addComponent(jLabel28)
+                    .addComponent(correctedYField))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -340,7 +327,7 @@ public class DeadReckoningInfoGUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -374,7 +361,6 @@ public class DeadReckoningInfoGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel positionXField;
     private javax.swing.JLabel positionYField;
     private javax.swing.JLabel velocityXField;
@@ -387,7 +373,7 @@ public class DeadReckoningInfoGUI extends javax.swing.JFrame {
      */
     public void setData(String _data) {
         final StringTokenizer st = new StringTokenizer(_data, "|");
-        if (st.countTokens() != 14) {
+        if (st.countTokens() != 13) {
             System.out.println("invalid data passed in gui");
             return;
         }
@@ -395,20 +381,40 @@ public class DeadReckoningInfoGUI extends javax.swing.JFrame {
         EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                accelerationXField.setText(st.nextToken());
-                accelerationYField.setText(st.nextToken());
-                velocityXField.setText(st.nextToken());
-                velocityYField.setText(st.nextToken());
-                positionXField.setText(st.nextToken());
-                positionYField.setText(st.nextToken());
-                distanceField.setText(st.nextToken());
-                intervalField.setText(st.nextToken());
-                inputXField.setText(st.nextToken());
-                inputYField.setText(st.nextToken());
-                correctedXField.setText(st.nextToken());
-                correctedYField.setText(st.nextToken());
-                distanceAvgField.setText(st.nextToken());
+                accelerationXField.setText(delimit(st.nextToken(), 3));
+                accelerationYField.setText(delimit(st.nextToken(), 3));
+                velocityXField.setText(delimit(st.nextToken(), 3));
+                velocityYField.setText(delimit(st.nextToken(), 3));
+                positionXField.setText(delimit(st.nextToken(), 3));
+                positionYField.setText(delimit(st.nextToken(), 3));
+                distanceField.setText(delimit(st.nextToken(), 3));
+                intervalField.setText(delimit(st.nextToken(), 3));
+                inputXField.setText(delimit(st.nextToken(), 3));
+                inputYField.setText(delimit(st.nextToken(), 3));
+                correctedXField.setText(delimit(st.nextToken(), 3));
+                correctedYField.setText(delimit(st.nextToken(), 3));
+                distanceAvgField.setText(delimit(st.nextToken(), 3));
             }
         });
+    }
+
+    /**
+     * delimits the passed string representation of a floating point value
+     * to the specified digits after the period
+     * @param _str the string to delimit
+     * @param _digAfterPeriod the number of digits after the period
+     * @return the delimited string
+     */
+    private String delimit(String _str, int _digAfterPeriod)
+    {
+        if(_str.indexOf(".")==-1)
+        {
+            return _str;
+        }
+        if(_str.substring(_str.indexOf(".")+1).length()<_digAfterPeriod)
+        {
+            return _str;
+        }
+        return _str.substring(0,_str.indexOf(".")+_digAfterPeriod+1);
     }
 }

@@ -29,8 +29,8 @@ public class SunSpotHostApplication {
      */
     private static void testGUI() {
         StringBuffer buff = new StringBuffer();
-        for (double i = 0d;; i = i + 0.1d) {
-            for (int j = 0; j < 14; j++) {
+        for (double i = 0d;; i = i + 0.125f) {
+            for (int j = 0; j < 13; j++) {
                 buff.append(i);
                 buff.append("|");
 
@@ -62,5 +62,6 @@ public class SunSpotHostApplication {
         SunSpotHostApplication app = new SunSpotHostApplication();
 
         new DSRClient(g);
+        //testGUI();
     }
 }
