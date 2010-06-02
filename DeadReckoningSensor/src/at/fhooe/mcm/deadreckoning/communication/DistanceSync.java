@@ -31,20 +31,37 @@ public class DistanceSync
 {
     /** @brief Boolean, defines if the thread should run or not. */
     private boolean m_runThread = true;
+
     /** @brief reference to the inertial sensor for getting the distance. */
     private InertialSensor m_sensor = null;
+
     /** @brief own distance. */
     private float m_owndist = 0;
+
     /** @brief other distance. */
     private float m_foreigndist = 0;
+
     /** @brief average distance. */
     private float m_avg = 0;
+
     /** @brief Send thread timeout. */
     private int m_timeOut = 1000;
 
+    /**
+     * @brief should not occure.
+     *
+     * is private. so what?
+     */
     private DistanceSync() {
     }
 
+    /**
+     * @brief Main CTor with reference to Inertialsensor.
+     *
+     * CTor for assigning and starting both threads.
+     * InertialSensor Instance should be after init() state!
+     * @param _sensor Reference to InertialSensor instance.
+     */
     public DistanceSync(InertialSensor _sensor) {
         m_sensor = _sensor;
 
@@ -52,6 +69,9 @@ public class DistanceSync
         startReceiverThread();
     }
 
+    /**
+     * Starting the receiving thread.
+     */
     public void startReceiverThread() {
         new Thread() {
 
@@ -93,11 +113,15 @@ public class DistanceSync
         }.start();
     }
 
+    /**
+     * Starting the sending thread. As the <code>DatagramConnection.send(Datagram _dg)</code>
+     * does no blocking, the thread makes a timeout after broadcasting the distance.
+     */
     synchronized public void startSenderThread() {
         new Thread() {
 
             public void run() {
-                // We create a DatagramConnection
+                // We create a DatagramConnection and a Datagram
                 DatagramConnection dgConnection = null;
                 Datagram dg = null;
                 try {
@@ -113,7 +137,7 @@ public class DistanceSync
 
                 while (true) {
                     try {
-                        // We send the message (UTF encoded)
+                        // UTF Message building and sending.
                         dg.reset();
                         dg.writeUTF("DIST:" + m_sensor.getDistance());
                         dgConnection.send(dg);
