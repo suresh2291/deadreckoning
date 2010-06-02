@@ -86,7 +86,7 @@ public class DeadReckoningAPI extends MIDlet {
             
             if (m_timer > 1f) {
 
-                m_dsr.sendData(m_sensor.currentStateToString() + m_distSync.getAverage() + "|", "0014.4F01.0000.6F4B");
+                m_dsr.sendData(m_sensor.currentStateToString() + m_distSync.getAverage() + "|", "0014.4F01.0000.6D72");
                 m_timer = 0f;
             }
 

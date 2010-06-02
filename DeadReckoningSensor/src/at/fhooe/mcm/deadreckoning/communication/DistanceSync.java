@@ -15,10 +15,6 @@ import javax.microedition.io.DatagramConnection;
 
 /**
  * @class DistanceSync
- * @author Florian Lettner, Lukas Bischof, Peter Riedl
- * @date 24.05.2010
- * @version 1.0
- *
  * @brief This class is responsible for broadcasting the distance and calculating the average between two SPOTs.
  *
  * The class uses two threads for receiving and sending. the receiving thread
@@ -26,9 +22,15 @@ import javax.microedition.io.DatagramConnection;
  * and the received distance.
  * The sending thread sends in a interval of 5 seconds the own distance as broadcast.
  * CAUTION: initialize the class ONLY after the init() of InertialSensor m_sensor!
+ *
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 24.05.2010
+ * @version 1.0
+ *
+
  */
-public class DistanceSync
-{
+public class DistanceSync {
+
     /** @brief Boolean, defines if the thread should run or not. */
     private boolean m_runThread = true;
 
@@ -50,6 +52,7 @@ public class DistanceSync
     /** @brief Send thread timeout. */
     private String m_rcvAddress = "broadcast";
 
+    /** @brief Indicates if data should be sent. */
     private boolean m_shoudSend = true;
 
     /**
@@ -82,10 +85,9 @@ public class DistanceSync
      * @param _sensor Reference to InertialSensor instance.
      * @param _shouldSend true: Distance will be sent. false: Distance won't be sent.
      */
-    public DistanceSync(InertialSensor _sensor, boolean _shouldSend)
-    {
+    public DistanceSync(InertialSensor _sensor, boolean _shouldSend) {
         this(_sensor);
-        m_shoudSend=_shouldSend;
+        m_shoudSend = _shouldSend;
     }
 
     /**
@@ -95,10 +97,9 @@ public class DistanceSync
      * @param _sensor Reference to InertialSensor instance.
      * @param _address The hardware address of the receiver.
      */
-    public DistanceSync(InertialSensor _sensor, String _address)
-    {
+    public DistanceSync(InertialSensor _sensor, String _address) {
         this(_sensor);
-        m_rcvAddress=_address;
+        m_rcvAddress = _address;
     }
 
     /**
@@ -160,7 +161,7 @@ public class DistanceSync
                     /** The Connection is either a broadcast or addressed to a specific receiver,
                      * so there the receiver address will be built together.
                      */
-                    dgConnection = (DatagramConnection) Connector.open("radiogram://"+m_rcvAddress+":99");
+                    dgConnection = (DatagramConnection) Connector.open("radiogram://" + m_rcvAddress + ":99");
                     // Then, we ask for a datagram with the maximum size allowed
                     dg = dgConnection.newDatagram(dgConnection.getMaximumLength());
                 } catch (IOException ex) {
@@ -172,8 +173,7 @@ public class DistanceSync
                 while (true) {
                     try {
                         // if m_shoudSend is false, no send will occure.
-                        if(m_shoudSend)
-                        {
+                        if (m_shoudSend) {
                             // UTF Message building and sending.
                             dg.reset();
                             dg.writeUTF("DIST:" + m_sensor.getDistance());
