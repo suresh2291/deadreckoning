@@ -75,11 +75,12 @@ public class DistanceSync
     }
 
     /**
-     * @brief Main CTor with reference to Inertialsensor.
+     * @brief CTor with reference to Inertialsensor and a bool if it should send or not.
      *
-     * CTor for assigning and starting both threads.
-     * InertialSensor Instance should be after init() state!
+     * If there are more than one sensors, the average will be calculated with an
+     * odd foreign value. This is a way to avoid unwanted values.
      * @param _sensor Reference to InertialSensor instance.
+     * @param _shouldSend true: Distance will be sent. false: Distance won't be sent.
      */
     public DistanceSync(InertialSensor _sensor, boolean _shouldSend)
     {
@@ -88,11 +89,11 @@ public class DistanceSync
     }
 
     /**
-     * @brief Main CTor with reference to Inertialsensor.
+     * @brief CTor with reference to Inertialsensor and the receiver address.
      *
-     * CTor for assigning and starting both threads.
-     * InertialSensor Instance should be after init() state!
+     * If a broadcast is unwanted, the packets can also be sent to a specific address.
      * @param _sensor Reference to InertialSensor instance.
+     * @param _address The hardware address of the receiver.
      */
     public DistanceSync(InertialSensor _sensor, String _address)
     {
@@ -156,7 +157,9 @@ public class DistanceSync
                 DatagramConnection dgConnection = null;
                 Datagram dg = null;
                 try {
-                    // The Connection is a broadcast so we specify it in the creation string
+                    /** The Connection is either a broadcast or addressed to a specific receiver,
+                     * so there the receiver address will be built together.
+                     */
                     dgConnection = (DatagramConnection) Connector.open("radiogram://"+m_rcvAddress+":99");
                     // Then, we ask for a datagram with the maximum size allowed
                     dg = dgConnection.newDatagram(dgConnection.getMaximumLength());
@@ -168,9 +171,10 @@ public class DistanceSync
 
                 while (true) {
                     try {
-                        // UTF Message building and sending.
+                        // if m_shoudSend is false, no send will occure.
                         if(m_shoudSend)
                         {
+                            // UTF Message building and sending.
                             dg.reset();
                             dg.writeUTF("DIST:" + m_sensor.getDistance());
                             dgConnection.send(dg);
