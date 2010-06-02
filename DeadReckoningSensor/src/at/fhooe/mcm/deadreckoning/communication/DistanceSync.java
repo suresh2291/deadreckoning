@@ -48,7 +48,9 @@ public class DistanceSync
     private int m_timeOut = 1000;
 
     /** @brief Send thread timeout. */
-    private String m_Address = "broadcast";
+    private String m_rcvAddress = "broadcast";
+
+    private boolean m_shoudSend = true;
 
     /**
      * @brief should not occure.
@@ -70,6 +72,32 @@ public class DistanceSync
 
         startSenderThread();
         startReceiverThread();
+    }
+
+    /**
+     * @brief Main CTor with reference to Inertialsensor.
+     *
+     * CTor for assigning and starting both threads.
+     * InertialSensor Instance should be after init() state!
+     * @param _sensor Reference to InertialSensor instance.
+     */
+    public DistanceSync(InertialSensor _sensor, boolean _shouldSend)
+    {
+        this(_sensor);
+        m_shoudSend=_shouldSend;
+    }
+
+    /**
+     * @brief Main CTor with reference to Inertialsensor.
+     *
+     * CTor for assigning and starting both threads.
+     * InertialSensor Instance should be after init() state!
+     * @param _sensor Reference to InertialSensor instance.
+     */
+    public DistanceSync(InertialSensor _sensor, String _address)
+    {
+        this(_sensor);
+        m_rcvAddress=_address;
     }
 
     /**
@@ -129,7 +157,7 @@ public class DistanceSync
                 Datagram dg = null;
                 try {
                     // The Connection is a broadcast so we specify it in the creation string
-                    dgConnection = (DatagramConnection) Connector.open("radiogram://"+m_Address+":99");
+                    dgConnection = (DatagramConnection) Connector.open("radiogram://"+m_rcvAddress+":99");
                     // Then, we ask for a datagram with the maximum size allowed
                     dg = dgConnection.newDatagram(dgConnection.getMaximumLength());
                 } catch (IOException ex) {
@@ -141,9 +169,13 @@ public class DistanceSync
                 while (true) {
                     try {
                         // UTF Message building and sending.
-                        dg.reset();
-                        dg.writeUTF("DIST:" + m_sensor.getDistance());
-                        dgConnection.send(dg);
+                        if(m_shoudSend)
+                        {
+                            dg.reset();
+                            dg.writeUTF("DIST:" + m_sensor.getDistance());
+                            dgConnection.send(dg);
+                        }
+
                         System.out.println("Broadcast is going through");
                     } catch (IOException ex) {
                         ex.printStackTrace();
