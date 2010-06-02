@@ -47,6 +47,9 @@ public class DistanceSync
     /** @brief Send thread timeout. */
     private int m_timeOut = 1000;
 
+    /** @brief Send thread timeout. */
+    private String m_Address = "broadcast";
+
     /**
      * @brief should not occure.
      *
@@ -126,7 +129,7 @@ public class DistanceSync
                 Datagram dg = null;
                 try {
                     // The Connection is a broadcast so we specify it in the creation string
-                    dgConnection = (DatagramConnection) Connector.open("radiogram://broadcast:99");
+                    dgConnection = (DatagramConnection) Connector.open("radiogram://"+m_Address+":99");
                     // Then, we ask for a datagram with the maximum size allowed
                     dg = dgConnection.newDatagram(dgConnection.getMaximumLength());
                 } catch (IOException ex) {
