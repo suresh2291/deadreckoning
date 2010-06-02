@@ -6,7 +6,6 @@ package at.fhooe.mcm.deadreckoning.Communication;
 
 import at.fhooe.mcm.deadreckoning.sensor.InertialSensor;
 import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
-import com.sun.spot.peripheral.NoRouteException;
 import com.sun.spot.util.Utils;
 import java.io.IOException;
 import javax.microedition.io.Connector;
