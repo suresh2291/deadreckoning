@@ -2,13 +2,14 @@ package at.fhooe.mcm.deadreckoning.host.dsr;
 
 /**
  * @class RREPPkg
- * @author Florian Lettner, Lukas Bischof, Peter Riedl
- * @version 1.0
- *
  * @brief this class represents a RREP package used by DSR.
  *
  * Container for a RREP package in DSR. It contains the route from initiator
  * to target.
+ *
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 26.05.2010
+ * @version 1.0
  */
 public class RREPPkg {
 

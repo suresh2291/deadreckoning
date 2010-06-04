@@ -4,14 +4,14 @@ import java.util.Hashtable;
 
 /**
  * @class RouteTable
- * @author Florian Lettner, Lukas Bischof, Peter Riedl
- * @version 1.0
- *
  * @brief This class represents a RouteTable used in DSR.
  *
  * This class is a ontainer for storage of a list of <target address, RouteRecord>
  * tupels in a hashtable.
  *
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 25.05.2010
+ * @version 1.0
  */
 public class RouteTable {
 

@@ -10,12 +10,14 @@ import java.util.logging.Logger;
 
 /**
  * @class SunSpotHostApplication
- * @author Florian Lettner, Lukas Bischof, Peter Riedl
- * @version 1.0
- *
  * @brief The starter for the Dead Reckoning GUI.
  *
  * Sstarts a new DSR client and the according GUI.
+ *
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 24.05.2010
+ * @version 1.0
+
  */
 public class SunSpotHostApplication {
 

@@ -4,14 +4,14 @@ import java.util.Vector;
 
 /**
  * @class RouteRecord
- * @author Florian Lettner, Lukas Bischof, Peter Riedl
- * @version 1.0
- *
  * @brief This class represents a RouteRecord used in DSR.
  *
  * This class is a ontainer for storage of a list of node addresses and provides some useful
  * operations needed for DSR.
  *
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 25.05.2010
+ * @version 1.0
  */
 public class RouteRecord {
 

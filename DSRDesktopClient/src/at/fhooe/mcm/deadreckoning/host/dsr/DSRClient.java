@@ -12,15 +12,16 @@ import javax.microedition.io.Connector;
 
 /**
  * @class DSRClient
- * @author Florian Lettner, Lukas Bischof, Peter Riedl
- * @version 1.0
- *
  * @brief The class with all the logic required for Dynamic Source Routing.
- * 
+ *
  * The only public funtion "sendData" is used to send data to any host in the
  * network. In order to perform dynamic soure routing, the client listens to any
  * connections on port 66 all the time. The received packets are inspected and
  * treated according to their type ([RREQ], [RREP] and [DATA].
+ *
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 25.05.2010
+ * @version 1.0
  */
 public class DSRClient {
 

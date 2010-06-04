@@ -26,7 +26,6 @@ import javax.microedition.io.DatagramConnection;
  * @date 24.05.2010
  * @version 1.0
  *
-
  */
 public class DistanceSync {
 
@@ -55,9 +54,9 @@ public class DistanceSync {
     private boolean m_shoudSend = true;
 
     /**
-     * @brief should not occure.
+     * @brief Should not occure.
      *
-     * is private. so what?
+     * Is private. so what?
      */
     private DistanceSync() {
     }
@@ -67,6 +66,7 @@ public class DistanceSync {
      *
      * CTor for assigning and starting both threads.
      * InertialSensor Instance should be after init() state!
+     * 
      * @param _sensor Reference to InertialSensor instance.
      */
     public DistanceSync(InertialSensor _sensor) {
@@ -81,6 +81,7 @@ public class DistanceSync {
      *
      * If there are more than one sensors, the average will be calculated with an
      * odd foreign value. This is a way to avoid unwanted values.
+     *
      * @param _sensor Reference to InertialSensor instance.
      * @param _shouldSend true: Distance will be sent. false: Distance won't be sent.
      */
@@ -93,6 +94,7 @@ public class DistanceSync {
      * @brief CTor with reference to Inertialsensor and the receiver address.
      *
      * If a broadcast is unwanted, the packets can also be sent to a specific address.
+     * 
      * @param _sensor Reference to InertialSensor instance.
      * @param _address The hardware address of the receiver.
      */
@@ -102,7 +104,7 @@ public class DistanceSync {
     }
 
     /**
-     * Starting the receiving thread.
+     * @brief Starting the receiving thread.
      */
     public void startReceiverThread() {
         new Thread() {
@@ -146,7 +148,9 @@ public class DistanceSync {
     }
 
     /**
-     * Starting the sending thread. As the <code>DatagramConnection.send(Datagram _dg)</code>
+     * @brief Starting the sending thread.
+     *
+     * As the <code>DatagramConnection.send(Datagram _dg)</code>
      * does no blocking, the thread makes a timeout after broadcasting the distance.
      */
     synchronized public void startSenderThread() {
@@ -189,6 +193,11 @@ public class DistanceSync {
         }.start();
     }
 
+    /**
+     * @brief Provides the caller with the average distance between syncable spots.
+     *
+     * @return The average distance of reference sensors.
+     */
     public float getAverage() {
         return m_avg;
     }

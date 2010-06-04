@@ -10,7 +10,7 @@ import java.util.StringTokenizer;
  *
  * @brief The GUI for viewing all information provided by the DeadReckoning system.
  *
- * displays filter coefficients, accelerations, computed velocities and positions
+ * Displays filter coefficients, accelerations, computed velocities and positions
  * as well as the distance and the averaged distance of two sensors.
  */
 public class DeadReckoningInfoGUI extends javax.swing.JFrame {
@@ -369,6 +369,7 @@ public class DeadReckoningInfoGUI extends javax.swing.JFrame {
 
     /**
      * @brief Sets the passed data thread safe for the several GUI fields.
+     *
      * @param _data a "|" separated list of data.
      */
     public void setData(String _data) {
@@ -401,20 +402,18 @@ public class DeadReckoningInfoGUI extends javax.swing.JFrame {
     /**
      * @brief Delimits the passed string representation of a floating point value
      * to the specified digits after the period.
-     * @param _str the string to delimit
-     * @param _digAfterPeriod the number of digits after the period
-     * @return the delimited string
+     *
+     * @param _str The string to delimit.
+     * @param _digAfterPeriod The number of digits after the period.
+     * @return The delimited string.
      */
-    private String delimit(String _str, int _digAfterPeriod)
-    {
-        if(_str.indexOf(".")==-1)
-        {
+    private String delimit(String _str, int _digAfterPeriod) {
+        if (_str.indexOf(".") == -1) {
             return _str;
         }
-        if(_str.substring(_str.indexOf(".")+1).length()<_digAfterPeriod)
-        {
+        if (_str.substring(_str.indexOf(".") + 1).length() < _digAfterPeriod) {
             return _str;
         }
-        return _str.substring(0,_str.indexOf(".")+_digAfterPeriod+1);
+        return _str.substring(0, _str.indexOf(".") + _digAfterPeriod + 1);
     }
 }

@@ -2,14 +2,14 @@ package at.fhooe.mcm.deadreckoning.host.dsr;
 
 /**
  * @class RREQPkg
- * @author Florian Lettner, Lukas Bischof, Peter Riedl
- * @version 1.0
- *
  * @brief This class represents a RREQ package used by DSR.
  *
  * Container for a RREQ package in DSR. It contains the initiator, the target, a
  * RouteRecord and an id.
  *
+ * @author Florian Lettner, Lukas Bischof, Peter Riedl
+ * @date 26.05.2010
+ * @version 1.0
  */
 public class RREQPkg {
 
